@@ -1,0 +1,8 @@
+README.md
+setup.py
+rlff/__init__.py
+rlff/myfunctions.py
+rlff.egg-info/PKG-INFO
+rlff.egg-info/SOURCES.txt
+rlff.egg-info/dependency_links.txt
+rlff.egg-info/top_level.txt
