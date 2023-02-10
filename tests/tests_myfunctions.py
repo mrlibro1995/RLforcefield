@@ -1,4 +1,4 @@
-from rlff import myfunctions
+from RLforcefield.rlff import myfunctions
 
 
 myfunctions.haversine() 
