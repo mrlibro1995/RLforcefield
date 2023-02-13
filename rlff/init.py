@@ -1,25 +1,36 @@
 import numpy as np
-from simtk.openmm.app import *
-from simtk.openmm import *
+from openmm.app import *
+from openmm import *
 from simtk.unit import *
+from parmed import unit as u
 from mdtraj.reporters import XTCReporter
 import os
 from parmed import load_file
-import sympy.physics.units as u
+
+from tkinter.filedialog import askopenfilename
 
 try:
   offs = int(sys.argv[1])
 except:
   offs = 0
 
+"""""
+  topfile = askopenfilename()
+  print(topfile)
+  pdbfile = askopenfilename()
+  print(pdbfile)
+"""""
+
 def run(m):
-  top = load_file(f'merged_topology.top')
-  pdb = load_file('minimized_structure.pdb')
+
+  top = load_file('/home/alireza/Desktop/myprojects/irbproject/rlff/samples/1_top.top')
+  pdb = load_file('/home/alireza/Desktop/myprojects/irbproject/rlff/samples/1_pdb.pdb')
   top.box = pdb.box[:]
   modeller = Modeller(pdb.topology, pdb.positions)
-  integrator = LangevinIntegrator(300*kelvin, 1/u.picosecond, 0.002*u.picoseconds)
+
+  integrator = LangevinIntegrator(300*kelvin, 1/picosecond, 0.002*picoseconds)
   integrator.setRandomNumberSeed(m)
-  sys = top.createSystem(nonbondedMethod=PME, nonbondedCutoff=1*u.nanometer, constraints=HBonds)
+  sys = top.createSystem(nonbondedMethod=PME, nonbondedCutoff=1*nanometer, constraints=HBonds)
   barostat = MonteCarloBarostat(1*bar, 300*kelvin, 25)
   sys.addForce(barostat)
   simulation = Simulation(modeller.topology, sys, integrator)
