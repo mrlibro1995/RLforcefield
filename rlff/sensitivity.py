@@ -1,7 +1,7 @@
 import gromologist as gml
 import numpy as np
 
-def claculate ():
+def claculate (topfile, pdbfile, xtcfile):
         td = gml.ThermoDiff()
         # this adds all possible NBFIXes to the list of calculated sensitivities:
         td.add_all_sigma_mods(top='merged_topology.top',
@@ -14,3 +14,4 @@ def claculate ():
         hmin, hmax = np.min(hdata), np.max(hdata)
         hmid = 0.5 * (hmin + hmax)
         td.calc_discrete_derivatives(dataset='helicity', threshold=[hmin, hmid, hmid, hmax])
+

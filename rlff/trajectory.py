@@ -7,67 +7,48 @@ from sys import stdout
 import os
 from parmed import load_file
 from parmed import unit as u
-import tkinter as tk
-from tkinter import filedialog
 
-try:
-  offs = int(sys.argv[1])
-except:
-  offs = 0
 
-def create_trajectory(m):
-  '''''
-  root = tk.Tk()
-  root.withdraw()
-
-  top_path = filedialog.askopenfilename(title='Choose topology file')
-  pdb_path = filedialog.askopenfilename(title='Choose structure file')
-  '''''
+def create_trajectory(num, topfilepath, pdbfilepath):
 
   # If the trajectory exists already then remove it
-
-  trajectory_filename = f'output_traj{m}.xtc'
-  chk_filename = f'state_{m}.chk'
-  log_filename = f'output_{m}.log'
-
+  trajectory_filename = f'output_traj{num}.xtc'
+  chk_filename = f'state_{num}.chk'
+  log_filename = f'output_{num}.log'
   checkfile = True if os.path.isfile(trajectory_filename) else False
   if checkfile:
     os.remove(trajectory_filename)
     os.remove(chk_filename)
     os.remove(log_filename)
 
-
-  top = load_file("samples/1_top.top")
-  pdb = load_file("samples/1_pdb.pdb")
+  top = load_file(topfilepath)
+  pdb = load_file(pdbfilepath)
   top.box = pdb.box[:]
   modeller = Modeller(pdb.topology, pdb.positions)
   integrator = LangevinIntegrator(300*kelvin, 1/picosecond, 0.002*picoseconds)
-  integrator.setRandomNumberSeed(m)
+  integrator.setRandomNumberSeed(num)
   sys = top.createSystem(nonbondedMethod=PME, nonbondedCutoff=1*nanometer, constraints=HBonds)
   barostat = MonteCarloBarostat(1*bar, 300*kelvin, 25)
   sys.addForce(barostat)
   simulation = Simulation(modeller.topology, sys, integrator)
-  if os.path.isfile(f'state_{m}.chk'):
-    simulation.loadCheckpoint(f'state_{m}.chk')
+  if os.path.isfile(f'state_{num}.chk'):
+    simulation.loadCheckpoint(f'state_{num}.chk')
   else:
     simulation.context.setPositions(modeller.positions)
-    print(f"minimizing in {m}")
+    print(f"minimizing in {num}")
     simulation.minimizeEnergy(maxIterations=400)
-    print(f"minimized in {m}")
+    print(f"minimized in {num}")
 
   app = True if os.path.isfile(trajectory_filename) else False
 
   reporter = XTCReporter(trajectory_filename, 5000, append=app)
   simulation.reporters.append(reporter)
-  simulation.reporters.append(StateDataReporter(f'output_{m}.log', 500, time=True, potentialEnergy=True, kineticEnergy=True, totalEnergy=True, temperature=True, volume=True, density=True, speed=True))
+  simulation.reporters.append(StateDataReporter(f'output_{num}.log', 500, time=True, potentialEnergy=True, kineticEnergy=True, totalEnergy=True, temperature=True, volume=True, density=True, speed=True))
   while True:
     try:
       for j in range(1, 10000000):
         simulation.step(1000)
-        simulation.saveCheckpoint(f'state_{m}.chk')
+        simulation.saveCheckpoint(f'state_{num}.chk')
     except:
-      simulation.loadCheckpoint(f'state_{m}.chk')
+      simulation.loadCheckpoint(f'state_{num}.chk')
       continue
-
-
-create_trajectory(offs)
