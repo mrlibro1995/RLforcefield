@@ -1,33 +1,46 @@
 import numpy as np
-from openmm.app import *
-from openmm import *
+from simtk.openmm.app import *
+from simtk.openmm import *
 from simtk.unit import *
-from parmed import unit as u
 from mdtraj.reporters import XTCReporter
+from sys import stdout
 import os
 from parmed import load_file
-
-from tkinter.filedialog import askopenfilename
+from parmed import unit as u
+import tkinter as tk
+from tkinter import filedialog
 
 try:
   offs = int(sys.argv[1])
 except:
   offs = 0
 
-"""""
-  topfile = askopenfilename()
-  print(topfile)
-  pdbfile = askopenfilename()
-  print(pdbfile)
-"""""
+def create_trajectory(m):
+  '''''
+  root = tk.Tk()
+  root.withdraw()
 
-def run(m):
+  top_path = filedialog.askopenfilename(title='Choose topology file')
+  pdb_path = filedialog.askopenfilename(title='Choose structure file')
+  '''''
 
-  top = load_file('/home/alireza/Desktop/myprojects/irbproject/rlff/samples/1_top.top')
-  pdb = load_file('/home/alireza/Desktop/myprojects/irbproject/rlff/samples/1_pdb.pdb')
+  # If the trajectory exists already then remove it
+
+  trajectory_filename = f'output_traj{m}.xtc'
+  chk_filename = f'state_{m}.chk'
+  log_filename = f'output_{m}.log'
+
+  checkfile = True if os.path.isfile(trajectory_filename) else False
+  if checkfile:
+    os.remove(trajectory_filename)
+    os.remove(chk_filename)
+    os.remove(log_filename)
+
+
+  top = load_file("samples/1_top.top")
+  pdb = load_file("samples/1_pdb.pdb")
   top.box = pdb.box[:]
   modeller = Modeller(pdb.topology, pdb.positions)
-
   integrator = LangevinIntegrator(300*kelvin, 1/picosecond, 0.002*picoseconds)
   integrator.setRandomNumberSeed(m)
   sys = top.createSystem(nonbondedMethod=PME, nonbondedCutoff=1*nanometer, constraints=HBonds)
@@ -41,8 +54,11 @@ def run(m):
     print(f"minimizing in {m}")
     simulation.minimizeEnergy(maxIterations=400)
     print(f"minimized in {m}")
-  app = True if os.path.isfile(f'output_traj{m}.xtc') else False
-  simulation.reporters.append(XTCReporter(f'output_traj{m}.xtc', 5000, append=app))
+
+  app = True if os.path.isfile(trajectory_filename) else False
+
+  reporter = XTCReporter(trajectory_filename, 5000, append=app)
+  simulation.reporters.append(reporter)
   simulation.reporters.append(StateDataReporter(f'output_{m}.log', 500, time=True, potentialEnergy=True, kineticEnergy=True, totalEnergy=True, temperature=True, volume=True, density=True, speed=True))
   while True:
     try:
@@ -53,4 +69,5 @@ def run(m):
       simulation.loadCheckpoint(f'state_{m}.chk')
       continue
 
-run(offs)
+
+create_trajectory(offs)
