@@ -1,6 +1,5 @@
 import gromologist as gml
 import numpy as np
-import plumed
 import os
 
 
