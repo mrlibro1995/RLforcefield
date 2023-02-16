@@ -24,11 +24,7 @@ def sensitivity_claculate(topfile, pdbfile, xtcfile, datfile, filedir):
     print([(i.type, str(i)) for i in td.mods])
 
 
-def helix_calculation(xtcfile, datfile, pdbfile):  #
-    print(xtcfile)
-    print(datfile)
-    print(pdbfile)
-    print("plumed driver --mf_xtc " + xtcfile + " --plumed " + datfile + " --pdb " + pdbfile)
+def helix_calculation(xtcfile, datfile, pdbfile):
     os.system("plumed driver --mf_xtc " + xtcfile + " --plumed " + datfile + " --pdb " + pdbfile)
 
 
