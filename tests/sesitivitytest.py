@@ -8,5 +8,5 @@ dat_path = "001_helix.dat"
 plumed_path = "plumed.dat"
 filedir = '/home/alireza/Desktop/myprojects/irbproject/rlff/RLforcefield/tests/samples'
 
-# sensitivity.sensitivity_claculate(top_path, pdb_path, xtc_path, dat_path, filedir)
-sensitivity.helix_calculation(xtc_path, plumed_path, pdb_path)
+sensitivity.sensitivity_calculate(top_path, pdb_path, xtc_path, dat_path, filedir, ['OW', 'HW'])
+#sensitivity.helix_calculation(xtc_path, plumed_path, pdb_path)
