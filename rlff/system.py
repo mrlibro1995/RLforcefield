@@ -9,7 +9,7 @@ import numpy as np
 import os
 import time
 
-class systemObj:
+class SystemObj:
     def __init__(self, topo, pdb, num_sample):
         self.topo = topo
         self.pdb = pdb
@@ -94,18 +94,3 @@ class systemObj:
         # print(helix_atoms)
         return hel_by_atom
 
-
-def systemmodifier(system: systemObj, atom: str, step: float = 0.01, attr: str = "sigma"):
-    topo = gml.Top(system.topo, pdb=system.pdb)
-    topo.check_pdb()
-    if (attr == "sigma"):
-        topo.parameters.edit_atomtype(atom, mod_sigma=step)
-    topo.save_top("newtopo.top")
-    topo.pdb.save_pdb("newpdb.pdb")
-    newsys = systemObj("newtopo.top", "newpdb.pdb", 1)
-    newsys.trajectory_producer(newsys.topo, newsys.pdb, newsys.num)
-
-
-def sensitive_atoms(system: systemObj):
-
-    print("hi")
