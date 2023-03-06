@@ -1,4 +1,3 @@
-from system import SystemObj
 import numpy as np
 from simtk.openmm.app import *
 from simtk.openmm import *
@@ -9,6 +8,9 @@ import gromologist as gml
 import numpy as np
 import os
 import time
+
+from RLforcefield.rlff.system import SystemObj
+
 
 class Controller:
     def __int__(self, sys: SystemObj):
@@ -24,5 +26,12 @@ class Controller:
         newsys = SystemObj("newtopo.top", "newpdb.pdb", 1)
         newsys.trajectory_producer(newsys.topo, newsys.pdb, newsys.num)
 
-    def sensitive_atoms(self):
-        print("hi")
+    def sensitive_atoms(self, hel_atoms, n_top):
+        '''''''''''''''''''''''''''''''''''''''''''''''
+        returns back the n_top sensitive values which 
+        are calculated in sensitivity_calc function.
+        according to absolute value of the list.
+        '''''''''''''''''''''''''''''''''''''''''''''''
+        temp = sorted(hel_atoms, key=lambda x: abs(x[1]))
+        top_vals = temp[-n_top:]
+        return top_vals

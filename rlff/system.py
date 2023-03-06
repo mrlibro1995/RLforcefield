@@ -14,10 +14,6 @@ class SystemObj:
         self.topo = topo
         self.pdb = pdb
         self.num = num_sample
-        # self.trajectory
-        # self.helicity
-        # self.plumed
-        # self.protein
 
     def trajectory_producer(self, topo, pdb, num=0, duration_ns=10):
         # If the trajectory exists already then remove it
@@ -71,7 +67,7 @@ class SystemObj:
 
         """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
             calculation of sensitivity of each atom 
-            """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+        """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
         td = gml.ThermoDiff()
         # this adds all possible NBFIXes to the list of calculated sensitivities:
