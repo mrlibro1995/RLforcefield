@@ -39,3 +39,4 @@ def sensitivity_calculate(topfile, pdbfile, xtcfile, datfile, filedir, exclude):
     print([(i.type, str(i)) for i in td.mods])
 '''''
 
+"sapowkdpqwodkpqowkdpoqwkdopqwkd"
