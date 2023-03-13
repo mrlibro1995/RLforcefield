@@ -16,7 +16,7 @@ class Controller:
 
         for a_c in atoms_changes:
             if (para == "sigma"):
-                topo.parameters.edit_atomtype(a_c[0], mod_sigma=a_c[1])
+                topo.parameters.edit_atomtype(a_c[0], mod_sigma= float(a_c[1]))
         topo.save_top(path + "/" + str(id) + ".top")
         topo.pdb.save_pdb(path + "/" + str(id) + ".pdb")
         newsys = SystemObj(path + "/" + str(id) + ".top", path + "/" + str(id) + ".pdb", id)
