@@ -9,17 +9,18 @@ import numpy as np
 import os
 import time
 
+
 class SystemObj:
     def __init__(self, topo, pdb, num_sample):
         self.topo = topo
         self.pdb = pdb
         self.num = num_sample
 
-    def trajectory_producer(self, topo, pdb, num=0, duration_ns=10):
+    def trajectory_producer(self, topo, pdb, num=0, duration_ns: float = 10.0, path: str = "/"):
         # If the trajectory exists already then remove it
-        trajectory_filename = f'output_traj{num}.xtc'
-        chk_filename = f'state_{num}.chk'
-        log_filename = f'output_{num}.log'
+        trajectory_filename = path + f'output_traj{num}.xtc'
+        chk_filename = path + f'state_{num}.chk'
+        log_filename = path + f'output_{num}.log'
         checkfile = True if os.path.isfile(trajectory_filename) else False
         if checkfile:
             os.remove(trajectory_filename)
@@ -59,7 +60,6 @@ class SystemObj:
         except:
             simulation.loadCheckpoint(f'state_{num}.chk')
 
-
     def helicity_calc(self, pdb, xtc, plumed):
         os.system("plumed driver --mf_xtc " + xtc + " --plumed " + plumed + " --pdb " + pdb)
 
@@ -89,4 +89,3 @@ class SystemObj:
                                     0]])
         # print(helix_atoms)
         return hel_by_atom
-
