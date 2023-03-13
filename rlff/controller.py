@@ -19,7 +19,7 @@ class Controller:
     def sensitive_atoms(self, hel_atoms, n_top):
         '''''''''''''''''''''''''''''''''''''''''''''''
         returns back the n_top sensitive values which 
-        are calculated in sensitivity_calc function.2
+        are calculated in sensitivity_calc function.
       according to absolute value of the list.
         '''''''''''''''''''''''''''''''''''''''''''''''
         temp = sorted(hel_atoms, key=lambda x: abs(x[1]))
