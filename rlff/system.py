@@ -66,7 +66,7 @@ class SystemObj:
     def sensitivity_calc(topfile, top, pdb, xtc, helicity, exclude):
 
         """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-            calculation of sensitivity of each atom 
+            calculation of sensitivity of each atom *
         """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
         td = gml.ThermoDiff()
