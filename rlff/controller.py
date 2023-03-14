@@ -8,15 +8,15 @@ class Controller:
     def __init__(self, system: SystemObj):
         self.sys = system
 
-    def systemmodifier(self, id: int, atoms: list, changes: list, ns: int = 1.0, para: str = "sigma",
+    def systemmodifier(self, id: int, atom: str, change: float, ns: int = 1, para: str = "sigma",
                        path: str = "/"):
         topo = gml.Top(self.sys.topo, pdb=self.sys.pdb)
         topo.check_pdb()
-        atoms_changes = np.stack((atoms, changes), axis=1).astype(object)
+        #atoms_changes = np.stack((atom, change), axis=1).astype(object)
 
-        for a_c in atoms_changes:
-            if (para == "sigma"):
-                topo.parameters.edit_atomtype(a_c[0], mod_sigma= float(a_c[1]))
+        #for a_c in atoms_changes:
+        if (para == "sigma"):
+            topo.parameters.edit_atomtype(atom, mod_sigma= change)
         topo.save_top(path + "/" + str(id) + ".top")
         topo.pdb.save_pdb(path + "/" + str(id) + ".pdb")
         newsys = SystemObj(path + "/" + str(id) + ".top", path + "/" + str(id) + ".pdb", id)
@@ -24,7 +24,7 @@ class Controller:
 
     def sensitive_atoms(self, hel_atoms, n_top):
         '''''''''''''''''''''''''''''''''''''''''''''''
-        returns back the n_top sensitive values which 
+        returns back the nsss_top sensitive values which 
         are calculated in sensitivity_calc function.1
         according to absolute value of the list.
         '''''''''''''''''''''''''''''''''''''''''''''''
