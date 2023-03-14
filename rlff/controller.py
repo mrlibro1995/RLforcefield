@@ -8,15 +8,19 @@ class Controller:
     def __init__(self, system: SystemObj):
         self.sys = system
 
-    def systemmodifier(self, id: int, atom: str, change: float, ns: int = 1, para: str = "sigma",
+    def systemmodifier(self, id: int, atom: list, change: list, ns: int = 1, para: str = "sigma",
                        path: str = "/"):
         topo = gml.Top(self.sys.topo, pdb=self.sys.pdb)
         topo.check_pdb()
-        # atoms_changes = np.stack((atoms, changes), axis=1)
-
-        # for a_c in atoms_changes:
-        if (para == "sigma"):
-            topo.parameters.edit_atomtype(atom, mod_sigma= change)
+        atoms_changes = [[x, y] for x, y in zip(atom, change)]
+        #atoms_changes = [['C', 0.0234], ['H', 0.123]]
+        #[['C', 0.0234], ['H', 0.123]]
+        print(atoms_changes)
+        for a_c in atoms_changes:
+            if (para == "sigma"):
+                print(str(type(a_c[0])) + " ___ " + str(a_c[0]))
+                print(str(type(a_c[1])) + " ___ " + str(a_c[1]))
+                topo.parameters.edit_atomtype(a_c[0], mod_sigma=a_c[1])
         topo.save_top(str(id) + ".top")
         topo.pdb.save_pdb(str(id) + ".pdb")
         newsys = SystemObj(str(id) + ".top", str(id) + ".pdb", id)

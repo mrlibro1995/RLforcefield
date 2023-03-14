@@ -53,12 +53,12 @@ class SystemObj:
             StateDataReporter(f'output_{num}.log', 500, time=True, potentialEnergy=True, kineticEnergy=True,
                               totalEnergy=True, temperature=True, volume=True, density=True, speed=True))
 
-        # try:
-        for j in range(1, duration_ns * 5):
-            simulation.step(1000)
-            simulation.saveCheckpoint(f'state_{num}.chk')
-        # except:
-        #     simulation.loadCheckpoint(f'state_{num}.chk')
+        try:
+            for j in range(1, duration_ns * 5):
+                simulation.step(1000)
+                simulation.saveCheckpoint(f'state_{num}.chk')
+        except:
+            simulation.loadCheckpoint(f'state_{num}.chk')
 
     def helicity_calc(self, pdb, xtc, plumed):
         os.system("plumed driver --mf_xtc " + xtc + " --plumed " + plumed + " --pdb " + pdb)
