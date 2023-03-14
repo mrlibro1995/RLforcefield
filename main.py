@@ -16,12 +16,19 @@ print(sensitive_atoms)
 atoms, changes = zip(*sensitive_atoms)
 atoms, changes = list(atoms), list(changes)
 
-alfa = 0.01
+alfa = 0.001
 
 changes = [x * alfa for x in changes]
 
+directory = 'it_0'
+it_path = os.path.join(parent_dir, directory)
+os.mkdir(it_path)
+print("Directory '% s' created" % it_path)
+sys = init_cntrl.systemmodifier(id=0, atom=atoms, para="sigma", change=changes, ns=1, path=it_path)
+contl = c.Controller(sys)
+
 it = 3
-id = 0
+id = 1
 
 while it > 0:
     directory = f'it_{it}'
@@ -29,6 +36,8 @@ while it > 0:
     os.mkdir(it_path)
     print("Directory '% s' created" % it_path)
 
-    init_cntrl.systemmodifier(id=id, atom=atoms, para="sigma", change=changes, ns=1, path=it_path)
+    sys = contl.systemmodifier(id=id, atom=atoms, para="sigma", change=changes, ns=1, path=it_path)
+    contl = c.Controller(sys)
+
     id = id + 1
     it = it - 1
