@@ -16,11 +16,11 @@ class SystemObj:
         self.pdb = pdb
         self.num = num_sample
 
-    def trajectory_producer(self, topo, pdb, num=0, duration_ns: float = 10.0, path: str = "/"):
+    def trajectory_producer(self, topo, pdb, num=0, duration_ns: int = 1, path: str = "/"):
         # If the trajectory exists already then remove it
-        trajectory_filename = path + f'output_traj{num}.xtc'
-        chk_filename = path + f'state_{num}.chk'
-        log_filename = path + f'output_{num}.log'
+        trajectory_filename = f'output_traj{num}.xtc'
+        chk_filename = f'state_{num}.chk'
+        log_filename = f'output_{num}.log'
         checkfile = True if os.path.isfile(trajectory_filename) else False
         if checkfile:
             os.remove(trajectory_filename)
@@ -53,12 +53,12 @@ class SystemObj:
             StateDataReporter(f'output_{num}.log', 500, time=True, potentialEnergy=True, kineticEnergy=True,
                               totalEnergy=True, temperature=True, volume=True, density=True, speed=True))
 
-        try:
-            for j in range(1, duration_ns * 500):
-                simulation.step(1000)
-                simulation.saveCheckpoint(f'state_{num}.chk')
-        except:
-            simulation.loadCheckpoint(f'state_{num}.chk')
+        # try:
+        for j in range(1, duration_ns * 5):
+            simulation.step(1000)
+            simulation.saveCheckpoint(f'state_{num}.chk')
+        # except:
+        #     simulation.loadCheckpoint(f'state_{num}.chk')
 
     def helicity_calc(self, pdb, xtc, plumed):
         os.system("plumed driver --mf_xtc " + xtc + " --plumed " + plumed + " --pdb " + pdb)

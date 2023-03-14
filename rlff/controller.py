@@ -12,14 +12,14 @@ class Controller:
                        path: str = "/"):
         topo = gml.Top(self.sys.topo, pdb=self.sys.pdb)
         topo.check_pdb()
-        #atoms_changes = np.stack((atom, change), axis=1).astype(object)
+        # atoms_changes = np.stack((atoms, changes), axis=1)
 
-        #for a_c in atoms_changes:
+        # for a_c in atoms_changes:
         if (para == "sigma"):
             topo.parameters.edit_atomtype(atom, mod_sigma= change)
-        topo.save_top(path + "/" + str(id) + ".top")
-        topo.pdb.save_pdb(path + "/" + str(id) + ".pdb")
-        newsys = SystemObj(path + "/" + str(id) + ".top", path + "/" + str(id) + ".pdb", id)
+        topo.save_top(str(id) + ".top")
+        topo.pdb.save_pdb(str(id) + ".pdb")
+        newsys = SystemObj(str(id) + ".top", str(id) + ".pdb", id)
         newsys.trajectory_producer(newsys.topo, newsys.pdb, newsys.num, duration_ns=ns, path=path)
 
     def sensitive_atoms(self, hel_atoms, n_top):
