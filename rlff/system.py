@@ -18,9 +18,9 @@ class SystemObj:
 
     def trajectory_producer(self, topo, pdb, num=0, duration_ns: int = 1, path: str = "/"):
         # If the trajectory exists already then remove it
-        trajectory_filename = f'output_traj{num}.xtc'
-        chk_filename = f'state_{num}.chk'
-        log_filename = f'output_{num}.log'
+        trajectory_filename = path + "/" + f'output_traj{num}.xtc'
+        chk_filename = path + "/" +  f'state_{num}.chk'
+        log_filename = path + "/" + f'output_{num}.log'
         checkfile = True if os.path.isfile(trajectory_filename) else False
         if checkfile:
             os.remove(trajectory_filename)
@@ -37,8 +37,8 @@ class SystemObj:
         barostat = MonteCarloBarostat(1 * bar, 300 * kelvin, 25)
         sys.addForce(barostat)
         simulation = Simulation(modeller.topology, sys, integrator)
-        if os.path.isfile(f'state_{num}.chk'):
-            simulation.loadCheckpoint(f'state_{num}.chk')
+        if os.path.isfile(chk_filename):
+            simulation.loadCheckpoint(chk_filename)
         else:
             simulation.context.setPositions(modeller.positions)
             print(f"minimizing in {num}")
@@ -50,15 +50,15 @@ class SystemObj:
         reporter = XTCReporter(trajectory_filename, 5000, append=app)
         simulation.reporters.append(reporter)
         simulation.reporters.append(
-            StateDataReporter(f'output_{num}.log', 500, time=True, potentialEnergy=True, kineticEnergy=True,
+            StateDataReporter(log_filename, 500, time=True, potentialEnergy=True, kineticEnergy=True,
                               totalEnergy=True, temperature=True, volume=True, density=True, speed=True))
 
         try:
-            for j in range(1, duration_ns * 5):
+            for j in range(1, duration_ns * 3):
                 simulation.step(1000)
-                simulation.saveCheckpoint(f'state_{num}.chk')
+                simulation.saveCheckpoint(chk_filename)
         except:
-            simulation.loadCheckpoint(f'state_{num}.chk')
+            simulation.loadCheckpoint(chk_filename)
 
     def helicity_calc(self, pdb, xtc, plumed):
         os.system("plumed driver --mf_xtc " + xtc + " --plumed " + plumed + " --pdb " + pdb)

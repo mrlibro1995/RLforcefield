@@ -10,7 +10,7 @@ init_sys = s.SystemObj("001_top.top", "001_pdb.pdb", 0)
 init_cntrl = c.Controller(init_sys)
 
 helicityatoms = init_sys.sensitivity_calc("001_top.top", "001_pdb.pdb", "001_trajectory.xtc", "001_helix.dat",
-                                          ['OW', 'HW', 'Cl','K'])
+                                          ['OW', 'HW', 'Cl', 'K'])
 sensitive_atoms = init_cntrl.sensitive_atoms(helicityatoms, 5)
 print(sensitive_atoms)
 atoms, changes = zip(*sensitive_atoms)
@@ -20,11 +20,15 @@ alfa = 0.01
 
 changes = [x * alfa for x in changes]
 
-it = 1
+it = 3
 id = 0
 
 while it > 0:
-    #change_val = alfa * s_atom[1]
-    init_cntrl.systemmodifier(id=id, atom=atoms, para="sigma", change=changes, ns=1)
+    directory = f'it_{it}'
+    it_path = os.path.join(parent_dir, directory)
+    os.mkdir(it_path)
+    print("Directory '% s' created" % it_path)
+
+    init_cntrl.systemmodifier(id=id, atom=atoms, para="sigma", change=changes, ns=1, path=it_path)
     id = id + 1
     it = it - 1

@@ -13,17 +13,15 @@ class Controller:
         topo = gml.Top(self.sys.topo, pdb=self.sys.pdb)
         topo.check_pdb()
         atoms_changes = [[x, y] for x, y in zip(atom, change)]
-        #atoms_changes = [['C', 0.0234], ['H', 0.123]]
-        #[['C', 0.0234], ['H', 0.123]]
+        # atoms_changes = [['C', 0.0234], ['H', 0.123]]
+        # [['C', 0.0234], ['H', 0.123]]
         print(atoms_changes)
         for a_c in atoms_changes:
             if (para == "sigma"):
-                print(str(type(a_c[0])) + " ___ " + str(a_c[0]))
-                print(str(type(a_c[1])) + " ___ " + str(a_c[1]))
                 topo.parameters.edit_atomtype(a_c[0], mod_sigma=a_c[1])
-        topo.save_top(str(id) + ".top")
-        topo.pdb.save_pdb(str(id) + ".pdb")
-        newsys = SystemObj(str(id) + ".top", str(id) + ".pdb", id)
+        topo.save_top(path + "/" + str(id) + ".top")
+        topo.pdb.save_pdb(path + "/" + str(id) + ".pdb")
+        newsys = SystemObj(path + "/" + str(id) + ".top", path + "/" + str(id) + ".pdb", id)
         newsys.trajectory_producer(newsys.topo, newsys.pdb, newsys.num, duration_ns=ns, path=path)
 
     def sensitive_atoms(self, hel_atoms, n_top):
