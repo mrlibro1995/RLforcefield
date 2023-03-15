@@ -56,7 +56,7 @@ class SystemObj:
                               totalEnergy=True, temperature=True, volume=True, density=True, speed=True))
 
         try:
-            for j in range(1, duration_ns * 500):
+            for j in range(1, duration_ns * 3):
                 simulation.step(1000)
                 simulation.saveCheckpoint(chk_filename)
         except:
@@ -64,16 +64,19 @@ class SystemObj:
 
 
 
-    def helicity_calc(self, pdb, xtc, plumed):
-        command = "plumed driver --mf_xtc " + xtc + " --plumed " + plumed + " --pdb " + pdb
-        print(command)
+    def helicity_calc(self, pdb, xtc, dir):
+        command = "cp plumed.dat /" + dir
         os.system(command)
-        print("HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII")
+        command = "cd " + dir
+        os.system(command)
+        command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + pdb
+        os.system(command)
+        print("Helicity is calculated by: " + command)
 
     def sensitivity_calc(topfile, top, pdb, xtc, helicity, exclude):
 
         """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-            calculation of sensitivity of each atom *
+            calculation of sensitivity of each atom **
         """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
         td = gml.ThermoDiff()
