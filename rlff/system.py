@@ -69,6 +69,8 @@ class SystemObj:
         os.system(command)
         command = "cd " + dir
         os.system(command)
+        command = "pwd"
+        os.system(command)
         command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + pdb
         os.system(command)
         print("Helicity is calculated by: " + command)
