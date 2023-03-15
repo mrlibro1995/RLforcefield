@@ -65,7 +65,7 @@ class SystemObj:
 
 
     def helicity_calc(self, pdb, xtc, dir):
-        command = "cp plumed.dat protein.pdb" + dir + "/"
+        command = "cp plumed.dat protein.pdb " + dir + "/"
         os.system(command)
         os.chdir(dir)
         print("Current working directory: {0}".format(os.getcwd()))
