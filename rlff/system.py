@@ -65,14 +65,15 @@ class SystemObj:
 
 
     def helicity_calc(self, pdb, xtc, dir):
-        command = "cp plumed.dat " + dir + "/"
+        command = "cp plumed.dat protein.pdb" + dir + "/"
         os.system(command)
         os.chdir(dir)
         print("Current working directory: {0}".format(os.getcwd()))
         command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + pdb
         os.system(command)
         print("Helicity is calculated by: " + command)
-
+        os.chdir('..')
+        print("Finalized working directory: {0}".format(os.getcwd()))
     def sensitivity_calc(topfile, top, pdb, xtc, helicity, exclude):
 
         """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
