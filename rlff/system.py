@@ -21,6 +21,8 @@ class SystemObj:
         trajectory_filename = path + "/" + f'output_traj{num}.xtc'
         chk_filename = path + "/" +  f'state_{num}.chk'
         log_filename = path + "/" + f'output_{num}.log'
+        self.trj = trajectory_filename
+
         checkfile = True if os.path.isfile(trajectory_filename) else False
         if checkfile:
             os.remove(trajectory_filename)
@@ -60,8 +62,13 @@ class SystemObj:
         except:
             simulation.loadCheckpoint(chk_filename)
 
+
+
     def helicity_calc(self, pdb, xtc, plumed):
-        os.system("plumed driver --mf_xtc " + xtc + " --plumed " + plumed + " --pdb " + pdb)
+        command = "plumed driver --mf_xtc " + xtc + " --plumed " + plumed + " --pdb " + pdb
+        print(command)
+        os.system(command)
+        print("HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII")
 
     def sensitivity_calc(topfile, top, pdb, xtc, helicity, exclude):
 

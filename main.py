@@ -25,6 +25,7 @@ it_path = os.path.join(parent_dir, directory)
 os.mkdir(it_path)
 print("Directory '% s' created" % it_path)
 sys = init_cntrl.systemmodifier(id=0, atom=atoms, para="sigma", change=changes, ns=1, path=it_path)
+sys.helicity_calc(sys.pdb, sys.trj, 'plumed.dat')
 contl = c.Controller(sys)
 
 it = 3
@@ -37,6 +38,7 @@ while it > 0:
     print("Directory '% s' created" % it_path)
 
     sys = contl.systemmodifier(id=id, atom=atoms, para="sigma", change=changes, ns=1, path=it_path)
+    sys.helicity_calc(sys.pdb, sys.trj, 'plumed.dat')
     contl = c.Controller(sys)
 
     id = id + 1
