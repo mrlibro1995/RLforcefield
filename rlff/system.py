@@ -67,10 +67,8 @@ class SystemObj:
     def helicity_calc(self, pdb, xtc, dir):
         command = "cp plumed.dat " + dir + "/"
         os.system(command)
-        command = "cd " + dir
-        os.system(command)
-        command = "pwd"
-        os.system(command)
+        os.chdir(dir)
+        print("Current working directory: {0}".format(os.getcwd()))
         command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + pdb
         os.system(command)
         print("Helicity is calculated by: " + command)
