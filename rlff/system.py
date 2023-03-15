@@ -65,7 +65,7 @@ class SystemObj:
 
 
     def helicity_calc(self, pdb, xtc, dir):
-        command = "cp plumed.dat /" + dir
+        command = "cp plumed.dat " + dir + "/"
         os.system(command)
         command = "cd " + dir
         os.system(command)
