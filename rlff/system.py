@@ -16,7 +16,7 @@ class SystemObj:
         self.pdb = pdb
         self.num = num_sample
 
-    def trajectory_producer(self, topo, pdb, num=0, duration_ns: int = 1, path: str = "/"):
+    def trajectory_producer(self, topo, pdb, num=0, duration_ns: float = 1.0, path: str = "/"):
         # If the trajectory exists already then remove it
         trajectory_filename = path + "/" + f'output_traj{num}.xtc'
         chk_filename = path + "/" +  f'state_{num}.chk'
@@ -56,7 +56,8 @@ class SystemObj:
                               totalEnergy=True, temperature=True, volume=True, density=True, speed=True))
 
         try:
-            for j in range(1, duration_ns * 100):
+            loop = int(duration_ns * 500)
+            for j in range(1, loop):
                 simulation.step(1000)
                 simulation.saveCheckpoint(chk_filename)
         except:
