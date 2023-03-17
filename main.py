@@ -39,7 +39,7 @@ while it > 0:
     print("Directory '% s' created" % it_path)
 
     sys = contl.systemmodifier(id=id, atom=atoms, para="sigma", change=changes, ns=1, path=it_path)
-    sys.helicity_calc(sys.pdb, sys.trj, 'plumed.dat')
+    sys.helicity_calc(sys.pdb, sys.trj, dir=directory)
     contl = c.Controller(sys)
 
     id = id + 1

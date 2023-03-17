@@ -56,7 +56,7 @@ class SystemObj:
                               totalEnergy=True, temperature=True, volume=True, density=True, speed=True))
 
         try:
-            for j in range(1, duration_ns * 3):
+            for j in range(1, duration_ns * 100):
                 simulation.step(1000)
                 simulation.saveCheckpoint(chk_filename)
         except:
