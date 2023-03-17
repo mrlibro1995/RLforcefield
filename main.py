@@ -24,6 +24,7 @@ directory = 'it_0'
 it_path = os.path.join(parent_dir, directory)
 os.mkdir(it_path)
 print("Directory '% s' created" % it_path)
+
 sys = init_cntrl.systemmodifier(id=0, atom=atoms, para="sigma", change=changes, ns=1, path=it_path)
 sys.helicity_calc(sys.pdb, sys.trj, dir=directory)
 contl = c.Controller(sys)
