@@ -19,7 +19,7 @@ class Controller:
         topo.save_top(path + "/" + str(id) + ".top")
         topo.pdb.save_pdb(path + "/" + str(id) + ".pdb")
         newsys = SystemObj(path + "/" + str(id) + ".top", path + "/" + str(id) + ".pdb", id)
-        newsys.trajectory_producer(newsys.topo, newsys.pdb, newsys.num, duration_ns=duration_ns, path=path)
+        newsys.trajectory_producer(newsys.topo, newsys.pdb, newsys.id, duration_ns=duration_ns, path=path)
         return newsys
 
     def sensitive_atoms(self, hel_atoms, n_top):

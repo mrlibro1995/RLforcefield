@@ -5,10 +5,11 @@ import numpy as np
 from RLforcefield.rlff import system as s
 from RLforcefield.rlff import controller as c
 
-duration_ns = 0.01
+
 parent_dir = "/home/mrlibro/Desktop/myprojects/irbbarcelona/rlff/RLforcefield"
 init_sys = s.SystemObj("001_top.top", "001_pdb.pdb", 0)
 init_cntrl = c.Controller(init_sys)
+duration_ns = 0.01
 
 helicityatoms = init_sys.sensitivity_calc("001_top.top", "001_pdb.pdb", "001_trajectory.xtc", "001_helix.dat",
                                           ['OW', 'HW', 'Cl', 'K'])
@@ -16,8 +17,8 @@ sensitive_atoms = init_cntrl.sensitive_atoms(helicityatoms, 5)
 print(sensitive_atoms)
 atoms, changes = zip(*sensitive_atoms)
 atoms, changes = list(atoms), list(changes)
-
-alfa = 0.001
+changes = changes / np.linalg.norm(changes)
+alfa = 0.02
 
 changes = [x * alfa for x in changes]
 
@@ -26,22 +27,22 @@ it_path = os.path.join(parent_dir, directory)
 os.mkdir(it_path)
 print("Directory '% s' created" % it_path)
 
-sys = init_cntrl.systemmodifier(id=0, atom=atoms, para="sigma", change=changes, ns=duration_ns, path=it_path)
+sys = init_cntrl.systemmodifier(id=0, atom=atoms, para="sigma", change=changes, duration_ns=duration_ns, path=it_path)
 sys.helicity_calc(sys.pdb, sys.trj, dir=directory)
 contl = c.Controller(sys)
 
-it = 3
+it = 1
 id = 1
 
-while it > 0:
+while it < 3:
     directory = f'it_{it}'
     it_path = os.path.join(parent_dir, directory)
     os.mkdir(it_path)
     print("Directory '% s' created" % it_path)
 
-    sys = contl.systemmodifier(id=id, atom=atoms, para="sigma", change=changes, ns=duration_ns, path=it_path)
+    sys = contl.systemmodifier(id=id, atom=atoms, para="sigma", change=changes, duration_ns=duration_ns, path=it_path)
     sys.helicity_calc(sys.pdb, sys.trj, dir=directory)
     contl = c.Controller(sys)
 
     id = id + 1
-    it = it - 1
+    it = it + 1
