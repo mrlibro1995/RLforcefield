@@ -65,7 +65,7 @@ class SystemObj:
         simulation.reporters.append(
             StateDataReporter(log_filename, 500, time=True, potentialEnergy=True, kineticEnergy=True,
                               totalEnergy=True, temperature=True, volume=True, density=True, speed=True))
-        print(")))))))))))))))))))))))))0")
+        print(")))))))))))))))))))))))0")
         try:
             loop = int(duration_ns * 500)
             for j in range(1, loop):
