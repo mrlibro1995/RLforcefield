@@ -14,6 +14,7 @@ helicityatoms = init_sys.sensitivity_calc("001_top.top", "001_pdb.pdb", "001_tra
                                           ['OW', 'HW', 'Cl', 'K'])
 sensitive_atoms = init_cntrl.sensitive_atoms(helicityatoms, 5)
 print(sensitive_atoms)
+
 atoms, changes = zip(*sensitive_atoms)
 atoms, changes = list(atoms), list(changes)
 changes = changes / np.linalg.norm(changes)
@@ -26,7 +27,8 @@ it_path = os.path.join(parent_dir, directory)
 os.mkdir(it_path)
 print("Directory '% s' created" % it_path)
 
-sys = init_cntrl.systemmodifier(id=0, atom=atoms, para="sigma", change=changes, duration_ns=duration_ns, path=it_path)
+sys = init_cntrl.systemmodifier(id=0, it=0, atom=atoms, para="sigma", change=changes, duration_ns=duration_ns,
+                                path=it_path)
 sys.helicity_calc(sys.pdb, sys.trj, dir=directory)
 contl = c.Controller(sys)
 
