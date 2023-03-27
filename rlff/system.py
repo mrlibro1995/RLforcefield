@@ -8,7 +8,7 @@ import gromologist as gml
 import numpy as np
 import os
 import time
-#from openmmplumed import PlumedForce
+from openmmplumed import PlumedForce
 
 
 class SystemObj:
@@ -39,12 +39,13 @@ class SystemObj:
         sys = top.createSystem(nonbondedMethod=PME, nonbondedCutoff=1 * nanometer, constraints=HBonds)
         barostat = MonteCarloBarostat(1 * bar, 300 * kelvin, 25)
         sys.addForce(barostat)
-        # sys.addForce(PlumedForce())
+        if (id == 0):
+            sys.addForce(PlumedForce(open('plumed_sens.dat').read()))
         simulation = Simulation(modeller.topology, sys, integrator)
 
         # loading checkpoint procedure
         # if it is the first iteration, it is not needed to load and we should set the pdb positions and minimizing enegry
-        # otherwis, check point should be loaded from the previous iteration
+        # otherwise, check point should be loaded from the previous iteration
 
         if id == 0:
             simulation.context.setPositions(modeller.positions)
