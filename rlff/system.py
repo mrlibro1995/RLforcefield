@@ -8,6 +8,7 @@ import gromologist as gml
 import numpy as np
 import os
 import time
+from openmmplumed import PlumedForce
 
 
 class SystemObj:
@@ -16,10 +17,10 @@ class SystemObj:
         self.pdb = pdb
         self.id = id_sample
 
-    def trajectory_producer(self, topo, pdb, id=0, duration_ns: float = 1.0, path: str = "/"):
+    def trajectory_producer(self, topo, pdb, id=0, it=0, duration_ns: float = 1.0, path: str = "/"):
         # If the trajectory exists already then remove it
         trajectory_filename = path + "/" + f'output_traj{id}.xtc'
-        chk_filename = path + "/" +  f'state_{id}.chk'
+        chk_filename = path + "/" + f'state_{id}.chk'
         log_filename = path + "/" + f'output_{id}.log'
         self.trj = trajectory_filename
 
@@ -38,11 +39,12 @@ class SystemObj:
         sys = top.createSystem(nonbondedMethod=PME, nonbondedCutoff=1 * nanometer, constraints=HBonds)
         barostat = MonteCarloBarostat(1 * bar, 300 * kelvin, 25)
         sys.addForce(barostat)
+        sys.addForce(PlumedForce())
         simulation = Simulation(modeller.topology, sys, integrator)
 
-        #loading checkpoint procedure
-        #if it is the first iteration, it is not needed to load and we should set the pdb positions and minimizing enegry
-        #otherwis, check point should be loaded from the previous iteration
+        # loading checkpoint procedure
+        # if it is the first iteration, it is not needed to load and we should set the pdb positions and minimizing enegry
+        # otherwis, check point should be loaded from the previous iteration
 
         if id == 0:
             simulation.context.setPositions(modeller.positions)
@@ -50,11 +52,11 @@ class SystemObj:
             simulation.minimizeEnergy(maxIterations=400)
             print(f"minimized in {id}")
         else:
-            previous_path = path.replace(str(id), str(id-1))
-            previous_checkpoint = previous_path + "/" + f'state_{id-1}.chk'
+            previous_path = path.replace(str(it), str(it - 1))
+            previous_checkpoint = previous_path + "/" + f'state_{id - 1}.chk'
             simulation.loadCheckpoint(previous_checkpoint)
-            print(f"Iteration: {id}")
-            print(f"The checkpoint of iteration {id-1} is loaded")
+            print(f"Iteration: {it}")
+            print(f"The checkpoint of iteration {it - 1} is loaded")
 
         app = True if os.path.isfile(trajectory_filename) else False
 
@@ -63,7 +65,7 @@ class SystemObj:
         simulation.reporters.append(
             StateDataReporter(log_filename, 500, time=True, potentialEnergy=True, kineticEnergy=True,
                               totalEnergy=True, temperature=True, volume=True, density=True, speed=True))
-
+        print(")))))))))))))))))))))))))0")
         try:
             loop = int(duration_ns * 500)
             for j in range(1, loop):
@@ -71,8 +73,6 @@ class SystemObj:
                 simulation.saveCheckpoint(chk_filename)
         except:
             simulation.loadCheckpoint(chk_filename)
-
-
 
     def helicity_calc(self, pdb, xtc, dir):
         command = "cp plumed.dat protein.pdb " + dir + "/"
@@ -84,6 +84,7 @@ class SystemObj:
         print("Helicity is calculated by: " + command)
         os.chdir('..')
         print("Finalized working directory: {0}".format(os.getcwd()))
+
     def sensitivity_calc(topfile, top, pdb, xtc, helicity, exclude):
 
         """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
