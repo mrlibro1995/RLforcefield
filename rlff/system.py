@@ -39,7 +39,7 @@ class SystemObj:
         sys = top.createSystem(nonbondedMethod=PME, nonbondedCutoff=1 * nanometer, constraints=HBonds)
         barostat = MonteCarloBarostat(1 * bar, 300 * kelvin, 25)
         sys.addForce(barostat)
-        sys.addForce(PlumedForce())
+        # sys.addForce(PlumedForce())
         simulation = Simulation(modeller.topology, sys, integrator)
 
         # loading checkpoint procedure
