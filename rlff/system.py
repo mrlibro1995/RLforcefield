@@ -8,7 +8,7 @@ import gromologist as gml
 import numpy as np
 import os
 import time
-from openmmplumed import PlumedForce
+#from openmmplumed import PlumedForce
 
 
 class SystemObj:
