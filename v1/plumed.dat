@@ -1,0 +1,3 @@
+MOLINFO STRUCTURE=protein.pdb 
+alpha: ALPHARMSD RESIDUES=all
+PRINT FILE=helix.dat ARG=alpha

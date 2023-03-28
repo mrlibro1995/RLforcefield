@@ -75,18 +75,18 @@ class SystemObj:
         except:
             simulation.loadCheckpoint(chk_filename)
 
-    def helicity_calc(self, pdb, xtc, dir):
+    def helicity_calc(self, xtc, dir):
         command = "cp plumed.dat protein.pdb " + dir + "/"
         os.system(command)
         os.chdir(dir)
         print("Current working directory: {0}".format(os.getcwd()))
-        command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + pdb
+        command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + self.pdb
         os.system(command)
         print("Helicity is calculated by: " + command)
         os.chdir('..')
         print("Finalized working directory: {0}".format(os.getcwd()))
 
-    def sensitivity_calc(topfile, top, pdb, xtc, helicity, exclude):
+    def sensitivity_calc(self, xtc, helicity, exclude):
 
         """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
             calculation of sensitivity of each atom **
@@ -94,11 +94,11 @@ class SystemObj:
 
         td = gml.ThermoDiff()
         # this adds all possible NBFIXes to the list of calculated sensitivities:
-        td.add_all_sigma_mods(top=top,
-                              structure=pdb, exclude=exclude)
+        td.add_all_sigma_mods(top=self.topo,
+                              structure=self.pdb, exclude=exclude)
         # this specifies a trajectory on which the sensitivity will be calculated, as well as relevant datasets:
         hdata = np.loadtxt(helicity)[:, 1]
-        td.add_traj(top=top, traj=xtc, datasets={'helicity': hdata})
+        td.add_traj(top=self.topo, traj=xtc, datasets={'helicity': hdata})
         td.run()  # this part will take some time
         # let's find the difference between the binned derivatives for the lower and upper half of the dataset:
         hmin, hmax = np.min(hdata), np.max(hdata)
