@@ -19,9 +19,9 @@ class SystemObj:
 
     def trajectory_producer(self, topo, pdb, id=0, it=0, duration_ns: float = 1.0, path: str = "/"):
         # If the trajectory exists already then remove it
-        trajectory_filename = path + "/" + f'output_traj{id}.xtc'
-        chk_filename = path + "/" + f'state_{id}.chk'
-        log_filename = path + "/" + f'output_{id}.log'
+        trajectory_filename = path + "/" + f'output_traj{it}.xtc'
+        chk_filename = path + "/" + f'state_{it}.chk'
+        log_filename = path + "/" + f'output_{it}.log'
         self.trj = trajectory_filename
 
         checkfile = True if os.path.isfile(trajectory_filename) else False
@@ -47,14 +47,14 @@ class SystemObj:
         # if it is the first iteration, it is not needed to load and we should set the pdb positions and minimizing enegry
         # otherwise, check point should be loaded from the previous iteration
 
-        if id == 0:
+        if id == 1:
             simulation.context.setPositions(modeller.positions)
             print(f"minimizing in {id}")
             simulation.minimizeEnergy(maxIterations=400)
             print(f"minimized in {id}")
-        else:
+        elif id > 1:
             previous_path = path.replace(str(it), str(it - 1))
-            previous_checkpoint = previous_path + "/" + f'state_{id - 1}.chk'
+            previous_checkpoint = previous_path + "/" + f'state_{it - 1}.chk'
             simulation.loadCheckpoint(previous_checkpoint)
             print(f"Iteration: {it}")
             print(f"The checkpoint of iteration {it - 1} is loaded")
