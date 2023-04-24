@@ -31,31 +31,32 @@ atoms, changes = list(atoms), list(changes)
 changes = changes / np.linalg.norm(changes)
 alfa = 0.001
 
-changes = [x * -alfa for x in changes]
-
-directory = 'it_0'
-it_path = os.path.join(parent_dir, directory)
-os.mkdir(it_path)
-print("Directory '% s' created" % it_path)
-
-sys = init_cntrl.systemmodifier(id=1, it=0, atom=atoms, para="sigma", change=changes, duration_ns=duration_ns,
-                                path=it_path)
-sys.helicity_calc(sys.trj, dir=directory)
-contl = c.Controller(sys)
-
-it = 1
-id = 2
-
-while it < 6:
-    directory = f'it_{it}'
-    it_path = os.path.join(parent_dir, directory)
-    os.mkdir(it_path)
-    print("Directory '% s' created" % it_path)
-
-    sys = contl.systemmodifier(id=id, it=it, atom=atoms, para="sigma", change=changes, duration_ns=duration_ns,
-                               path=it_path)
-    sys.helicity_calc(sys.pdb, sys.trj, dir=directory)
-    contl = c.Controller(sys)
-
-    id = id + 1
-    it = it + 1
+#
+# changes = [x * -alfa for x in changes]
+#
+# directory = 'it_0'
+# it_path = os.path.join(parent_dir, directory)
+# os.mkdir(it_path)
+# print("Directory '% s' created" % it_path)
+#
+# sys = init_cntrl.systemmodifier(id=1, it=0, atom=atoms, para="sigma", change=changes, duration_ns=duration_ns,
+#                                 path=it_path)
+# sys.helicity_calc(sys.trj, dir=directory)
+# contl = c.Controller(sys)
+#
+# it = 1
+# id = 2
+#
+# while it < 6:
+#     directory = f'it_{it}'
+#     it_path = os.path.join(parent_dir, directory)
+#     os.mkdir(it_path)
+#     print("Directory '% s' created" % it_path)
+#
+#     sys = contl.systemmodifier(id=id, it=it, atom=atoms, para="sigma", change=changes, duration_ns=duration_ns,
+#                                path=it_path)
+#     sys.helicity_calc(sys.pdb, sys.trj, dir=directory)
+#     contl = c.Controller(sys)
+#
+#     id = id + 1
+#     it = it + 1
