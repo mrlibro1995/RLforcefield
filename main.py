@@ -20,7 +20,6 @@ os.mkdir(it_path)
 init_sys.trajectory_producer("001_top.top", "001_pdb.pdb", 0, 0, 10.0, it_path)
 """""
 
-
 helicityatoms = init_sys.sensitivity_calc("v2_traj.xtc", "v2_helix.dat",
                                           ['OW', 'HW', 'Cl', 'K'])
 sensitive_atoms = init_cntrl.sensitive_atoms(helicityatoms, 5)
