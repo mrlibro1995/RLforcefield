@@ -16,6 +16,9 @@ class SystemObj:
         self.topo = topo
         self.pdb = pdb
         self.id = id_sample
+        self.atom_n = 10
+        self.para_n = 1
+
 
     def trajectory_producer(self, topo, pdb, id=0, it=0, duration_ns: float = 1.0, path: str = "/"):
         # If the trajectory exists already then remove it
