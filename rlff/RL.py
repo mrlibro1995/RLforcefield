@@ -16,12 +16,9 @@ class ForceFieldEnv(Env):
         # Set start temp
         self.state = self.reset()
 
-    def step(self, atoms, path):
+    def step(self, action):
         # Using Q_Learning method to evaluate the best action, now is random
-        action = self.action_space.sample()
-        obs = self.observation_space.sample()
-        print(action)
-        print(obs)
+
 
         # base = 0.01
         # steps = action * base

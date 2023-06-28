@@ -20,7 +20,7 @@ class Controller():
         topo.save_top(path + "/" + str(it) + ".top")
         topo.pdb.save_pdb(path + "/" + str(it) + ".pdb")
         newsys = SystemObj(path + "/" + str(it) + ".top", path + "/" + str(it) + ".pdb", id)
-        newsys.trajectory_producer(newsys.topo, newsys.pdb, newsys.id, it=it, duration_ns=duration_ns, path=path)
+        newsys.trajectory_producer(id=newsys.id, it=it, duration_ns=duration_ns, path=path)
         return newsys
 
     def systemmodifier_RL(self, id: int, it: int, atoms: list, step: list,
@@ -33,7 +33,7 @@ class Controller():
         print(nonzero_parameters)
         for para in nonzero_parameters:
             for atom in atoms:
-                if (para == 0): # sigma = 0
+                if (para == 0):  # sigma = 0
                     topo.parameters.edit_atomtype(atom, mod_sigma=step[para])
         topo.save_top(path + "/" + str(it) + ".top")
         topo.pdb.save_pdb(path + "/" + str(it) + ".pdb")

@@ -19,8 +19,7 @@ class SystemObj:
         self.atom_n = 10
         self.para_n = 1
 
-
-    def trajectory_producer(self, topo, pdb, id=0, it=0, duration_ns: float = 1.0, path: str = "/"):
+    def trajectory_producer(self,plumed_file = 'plumed_sens.dat', id=0, it=0, duration_ns: float = 1.0, path: str = "/"):
         # If the trajectory exists already then remove it
         trajectory_filename = path + "/" + f'output_traj{it}.xtc'
         chk_filename = path + "/" + f'state_{it}.chk'
@@ -33,8 +32,8 @@ class SystemObj:
             os.remove(chk_filename)
             os.remove(log_filename)
 
-        top = load_file(topo)
-        pdb = load_file(pdb)
+        top = load_file(self.topo)
+        pdb = load_file(self.pdb)
         top.box = pdb.box[:]
         modeller = Modeller(pdb.topology, pdb.positions)
         integrator = LangevinIntegrator(300 * kelvin, 1 / picosecond, 0.002 * picoseconds)
@@ -42,15 +41,11 @@ class SystemObj:
         sys = top.createSystem(nonbondedMethod=PME, nonbondedCutoff=1 * nanometer, constraints=HBonds)
         barostat = MonteCarloBarostat(1 * bar, 300 * kelvin, 25)
         sys.addForce(barostat)
-        if (id == 0):
-            sys.addForce(PlumedForce(open('plumed_sens.dat').read()))
         simulation = Simulation(modeller.topology, sys, integrator)
 
-        # loading checkpoint procedure
-        # if it is the first iteration, it is not needed to load and we should set the pdb positions and minimizing enegry
-        # otherwise, check point should be loaded from the previous iteration
-
-        if id == 1:
+        if id == 0:
+            sys.addForce(PlumedForce(open(plumed_file).read()))
+        elif id == 1:
             simulation.context.setPositions(modeller.positions)
             print(f"minimizing in {id}")
             simulation.minimizeEnergy(maxIterations=400)
@@ -69,7 +64,6 @@ class SystemObj:
         simulation.reporters.append(
             StateDataReporter(log_filename, 500, time=True, potentialEnergy=True, kineticEnergy=True,
                               totalEnergy=True, temperature=True, volume=True, density=True, speed=True))
-        print(")))))))))))))))))))))))0")
         try:
             loop = int(duration_ns * 500)
             for j in range(1, loop):
