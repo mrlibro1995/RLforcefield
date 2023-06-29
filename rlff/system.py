@@ -80,8 +80,24 @@ class SystemObj:
         command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + self.pdb
         os.system(command)
         print("Helicity is calculated by: " + command)
+        self.reward_maker()
         os.chdir('..')
         print("Finalized working directory: {0}".format(os.getcwd()))
+
+    def reward_maker(self):
+        values = []
+
+        with open('helix.dat', 'r') as file:
+            for line in file:
+                columns = line.split()
+                if len(columns) >= 2:
+                    try:
+                        value = float(columns[1])
+                        values.append(value)
+                    except ValueError:
+                        pass
+
+        print(values)
 
     def sensitivity_calc(self, xtc, helicity, exclude):
 

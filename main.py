@@ -1,5 +1,4 @@
 import os
-import numpy as np
 from RLforcefield.rlff import RL as rl
 from RLforcefield.rlff import system as s
 from RLforcefield.rlff import controller as c
@@ -39,24 +38,24 @@ sys = init_contl.systemmodifier_gradient(id=1, it=0, atoms=top_sensitive_atoms, 
 
 sys.helicity_calc(sys.trj, dir=directory)
 contl = c.Controller(sys)
-
-it = 1
-id = 2
-
-while it < 6:
-    directory = f'it_{it}'
-    it_path = os.path.join(parent_dir, directory)
-    os.mkdir(it_path)
-    print("Directory '% s' created" % it_path)
-
-    sys = init_contl.systemmodifier_gradient(id=id, it=it, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
-                                           duration_ns=duration_ns,
-                                           path=it_path)
-    print(directory)
-    sys.helicity_calc(sys.trj, dir=directory)
-
-    id = id + 1
-    it = it + 1
+#
+# it = 1
+# id = 2
+#
+# while it < 6:
+#     directory = f'it_{it}'
+#     it_path = os.path.join(parent_dir, directory)
+#     os.mkdir(it_path)
+#     print("Directory '% s' created" % it_path)
+#
+#     sys = init_contl.systemmodifier_gradient(id=id, it=it, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
+#                                            duration_ns=duration_ns,
+#                                            path=it_path)
+#     print(directory)
+#     sys.helicity_calc(sys.trj, dir=directory)
+#
+#     id = id + 1
+#     it = it + 1
 
 
 
