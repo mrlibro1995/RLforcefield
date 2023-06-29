@@ -80,11 +80,11 @@ class SystemObj:
         command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + self.pdb
         os.system(command)
         print("Helicity is calculated by: " + command)
-        self.reward_maker()
+        self.reward_calculation()
         os.chdir('..')
         print("Finalized working directory: {0}".format(os.getcwd()))
 
-    def reward_maker(self):
+    def reward_calculation(self):
         values = []
 
         with open('helix.dat', 'r') as file:
