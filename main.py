@@ -27,22 +27,22 @@ init_sys.trajectory_producer(1, 0, 2.0, it_path)
 #### Finding the most sensitive atoms (those are performing important role to make system to be helixed
 ### We can ignore those atoms which give fake information like "CL"
 ### To calculate correctly, we need to
-# helix_atoms = init_sys.sensitivity_calc("v2_traj.xtc", "v2_helix.dat",
-#                                         ['OW', 'HW', 'Cl', 'K'])
-# top_sensitive_atoms, gradients = init_contl.sensitive_atoms(helix_atoms, 4)
-# alfa = 0.001
-# gradients = [x * -alfa for x in gradients]
-#
-# directory = 'it_0'
-# it_path = os.path.join(parent_dir, directory)
-# os.mkdir(it_path)
-# print("Directory '% s' created" % it_path)
-#
-# sys = init_contl.systemmodifier_gradient(id=1, it=0, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
-#                                          duration_ns=duration_ns,
-#                                          path=it_path)
-#
-# sys.helicity_calc(sys.trj, dir=directory)
+helix_atoms = init_sys.sensitivity_calc("v2_traj.xtc", "v2_helix.dat",
+                                        ['OW', 'HW', 'Cl', 'K'])
+top_sensitive_atoms, gradients = init_contl.sensitive_atoms(helix_atoms, 4)
+alfa = 0.001
+gradients = [x * -alfa for x in gradients]
+
+directory = 'it_0'
+it_path = os.path.join(parent_dir, directory)
+os.mkdir(it_path)
+print("Directory '% s' created" % it_path)
+
+sys = init_contl.systemmodifier_gradient(id=2, it=0, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
+                                         duration_ns=duration_ns,
+                                         path=it_path)
+
+sys.helicity_calc(sys.trj, dir=directory)
 # contl = c.Controller(sys)
 #
 # it = 1

@@ -47,9 +47,12 @@ class SystemObj:
         if id == 0: # sensitivity calculation
             sys.addForce(PlumedForce(open(plumed_file).read()))
         elif id == 1: # time constant calculation
+            print("current directory: " + path)
             sensitivity_path = path.replace('time_constant','sensitivity_xtc')
             sensitivity_checkpoint = sensitivity_path + "/" + f'state_0.chk'
+            print("new directory: " + sensitivity_checkpoint)
             simulation.loadCheckpoint(sensitivity_checkpoint)
+            print("checkpoint loaded")
         elif id == 2: # first iteration
             simulation.context.setPositions(modeller.positions)
             print(f"minimizing in {id}")
