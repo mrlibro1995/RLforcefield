@@ -47,7 +47,8 @@ class SystemObj:
         if id == 0: # sensitivity calculation
             sys.addForce(PlumedForce(open(plumed_file).read()))
         elif id == 1: # time constant calculation
-            sensitivity_checkpoint = 'state_0.chk'
+            sensitivity_path = path.replace('time_constant','sensitivity_xtc')
+            sensitivity_checkpoint = sensitivity_path + "/" + f'state_0.chk'
             simulation.loadCheckpoint(sensitivity_checkpoint)
         elif id == 2: # first iteration
             simulation.context.setPositions(modeller.positions)

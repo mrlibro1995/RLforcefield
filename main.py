@@ -22,7 +22,7 @@ init_contl = c.Controller(init_sys)
 directory = 'time_constant'
 it_path = os.path.join(parent_dir, directory)
 os.mkdir(it_path)
-init_sys.trajectory_producer(0, 0, 10.0, it_path)
+init_sys.trajectory_producer(1, 0, 2.0, it_path)
 
 #### Finding the most sensitive atoms (those are performing important role to make system to be helixed
 ### We can ignore those atoms which give fake information like "CL"
