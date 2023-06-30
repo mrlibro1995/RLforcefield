@@ -12,6 +12,13 @@ duration_ns = 0.01
 init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", 0)
 init_contl = c.Controller(init_sys)
 
+#### Producing Trajectory for time constant, Just for the fist time you add a new system
+directory = 'time_constant'
+it_path = os.path.join(parent_dir, directory)
+os.mkdir(it_path)
+init_sys.trajectory_producer(0, 0, 10.0, it_path)
+
+
 #### Producing Trajectory for sensitivity calculation, Just for the fist time you add a new system
 # directory = 'sensitivity_xtc'
 # it_path = os.path.join(parent_dir, directory)

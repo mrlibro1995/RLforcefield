@@ -9,6 +9,7 @@ import numpy as np
 import os
 import time
 from openmmplumed import PlumedForce
+import scipy.optimize as opt
 
 
 class SystemObj:
@@ -43,14 +44,16 @@ class SystemObj:
         sys.addForce(barostat)
         simulation = Simulation(modeller.topology, sys, integrator)
 
-        if id == 0:
+        if id == -1: # time constant calculation
             sys.addForce(PlumedForce(open(plumed_file).read()))
-        elif id == 1:
+        elif id == 0: # sensitivity calculation
+            sys.addForce(PlumedForce(open(plumed_file).read()))
+        elif id == 1: # first iteration
             simulation.context.setPositions(modeller.positions)
             print(f"minimizing in {id}")
             simulation.minimizeEnergy(maxIterations=400)
             print(f"minimized in {id}")
-        elif id > 1:
+        elif id > 1: # second and more iterations, continuing from the already built first trajectory
             previous_path = path.replace(str(it), str(it - 1))
             previous_checkpoint = previous_path + "/" + f'state_{it - 1}.chk'
             simulation.loadCheckpoint(previous_checkpoint)
@@ -80,12 +83,12 @@ class SystemObj:
         command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + self.pdb
         os.system(command)
         print("Helicity is calculated by: " + command)
-        self.reward_calculation()
+        #self.reward_calculation()
         os.chdir('..')
         print("Finalized working directory: {0}".format(os.getcwd()))
 
     def reward_calculation(self):
-        values = []
+        helix_values = []
 
         with open('helix.dat', 'r') as file:
             for line in file:
@@ -93,11 +96,23 @@ class SystemObj:
                 if len(columns) >= 2:
                     try:
                         value = float(columns[1])
-                        values.append(value)
+                        helix_values.append(value)
                     except ValueError:
                         pass
+        # spliting the list of helicities into 4 sections, you can change 4 to more or less
+        helix_splited_lists = self.split_list(helix_values,4)
+        x_data = np.array([1, 2, 3, 4])
+        helix_splited_averages = [sum(row) / len(row) for row in helix_splited_lists]
+        params, _ = opt.curve_fit(a * np.exp(-b * x), x_data, y_data)
 
-        print(values)
+    def split_list(lst, n):
+        division_length = len(lst) // n
+        remainder = len(lst) % n
+
+        sublists = [lst[i * division_length + min(i, remainder):(i + 1) * division_length + min(i + 1, remainder)] for i
+                    in range(n)]
+
+        return sublists
 
     def sensitivity_calc(self, xtc, helicity, exclude):
 
@@ -125,3 +140,5 @@ class SystemObj:
                                     0]])
         # print(helix_atoms)
         return hel_by_atom
+
+    def time_constant_calc(self):

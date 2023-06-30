@@ -1,0 +1,11 @@
+MOLINFO STRUCTURE=protein.pdb
+alpha: ALPHARMSD RESIDUES=all
+
+UNRESTRAINED: MOVINGRESTRAINT ...
+   STRIDE=2
+   ARG=alpha
+   KAPPA0=0.0
+   STEP0=0 AT0=16.0
+...
+
+PRINT FILE=helix_sens.dat ARG=alpha STRIDE=1000
