@@ -89,32 +89,32 @@ class SystemObj:
         os.chdir('..')
         print("Finalized working directory: {0}".format(os.getcwd()))
 
-    def reward_calculation(self):
-        helix_values = []
+    # def reward_calculation(self):
+    #     helix_values = []
+    #
+    #     with open('helix.dat', 'r') as file:
+    #         for line in file:
+    #             columns = line.split()
+    #             if len(columns) >= 2:
+    #                 try:
+    #                     value = float(columns[1])
+    #                     helix_values.append(value)
+    #                 except ValueError:
+    #                     pass
+    #     # spliting the list of helicities into 4 sections, you can change 4 to more or less
+    #     helix_splited_lists = self.split_list(helix_values,4)
+    #     x_data = np.array([1, 2, 3, 4])
+    #     helix_splited_averages = [sum(row) / len(row) for row in helix_splited_lists]
+    #     params, _ = opt.curve_fit(a * np.exp(-b * x), x_data, y_data)
 
-        with open('helix.dat', 'r') as file:
-            for line in file:
-                columns = line.split()
-                if len(columns) >= 2:
-                    try:
-                        value = float(columns[1])
-                        helix_values.append(value)
-                    except ValueError:
-                        pass
-        # spliting the list of helicities into 4 sections, you can change 4 to more or less
-        helix_splited_lists = self.split_list(helix_values,4)
-        x_data = np.array([1, 2, 3, 4])
-        helix_splited_averages = [sum(row) / len(row) for row in helix_splited_lists]
-        params, _ = opt.curve_fit(a * np.exp(-b * x), x_data, y_data)
-
-    def split_list(lst, n):
-        division_length = len(lst) // n
-        remainder = len(lst) % n
-
-        sublists = [lst[i * division_length + min(i, remainder):(i + 1) * division_length + min(i + 1, remainder)] for i
-                    in range(n)]
-
-        return sublists
+    # def split_list(lst, n):
+    #     division_length = len(lst) // n
+    #     remainder = len(lst) % n
+    #
+    #     sublists = [lst[i * division_length + min(i, remainder):(i + 1) * division_length + min(i + 1, remainder)] for i
+    #                 in range(n)]
+    #
+    #     return sublists
 
     def sensitivity_calc(self, xtc, helicity, exclude):
 
@@ -143,4 +143,4 @@ class SystemObj:
         # print(helix_atoms)
         return hel_by_atom
 
-    def time_constant_calc(self):
+    # def time_constant_calc(self):
