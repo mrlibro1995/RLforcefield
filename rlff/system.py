@@ -44,16 +44,17 @@ class SystemObj:
         sys.addForce(barostat)
         simulation = Simulation(modeller.topology, sys, integrator)
 
-        if id == -1: # time constant calculation
+        if id == 0: # sensitivity calculation
             sys.addForce(PlumedForce(open(plumed_file).read()))
-        elif id == 0: # sensitivity calculation
-            sys.addForce(PlumedForce(open(plumed_file).read()))
-        elif id == 1: # first iteration
+        elif id == 1: # time constant calculation
+            sensitivity_checkpoint = 'state_0.chk'
+            simulation.loadCheckpoint(sensitivity_checkpoint)
+        elif id == 2: # first iteration
             simulation.context.setPositions(modeller.positions)
             print(f"minimizing in {id}")
             simulation.minimizeEnergy(maxIterations=400)
             print(f"minimized in {id}")
-        elif id > 1: # second and more iterations, continuing from the already built first trajectory
+        elif id > 2: # second and more iterations, continuing from the already built first trajectory
             previous_path = path.replace(str(it), str(it - 1))
             previous_checkpoint = previous_path + "/" + f'state_{it - 1}.chk'
             simulation.loadCheckpoint(previous_checkpoint)
