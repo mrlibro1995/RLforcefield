@@ -81,6 +81,7 @@ class SystemObj:
             simulation.loadCheckpoint(chk_filename)
 
     def helicity_calc(self, xtc, dir):
+        ### first part: calculation of helicity and save the helix file
         command = "cp plumed.dat protein.pdb " + dir + "/"
         os.system(command)
         os.chdir(dir)
@@ -91,6 +92,35 @@ class SystemObj:
         #self.reward_calculation()
         os.chdir('..')
         print("Finalized working directory: {0}".format(os.getcwd()))
+
+        ### second part: read the helix file and use it as the reward
+        ### for the reward we need to use the avg of the helicity file
+        directory = '.'  # Replace with the actual directory path
+        file_extension = '.dat'
+
+        # Get the list of files in the directory
+        file_names = [file for file in os.listdir(directory) if file.endswith(file_extension)]
+        data_lists = []  # List to store the extracted data
+
+        for file_path in file_names:
+            data_list = []  # List to store the second column data from each file
+
+            with open(file_path, 'r') as file:
+                lines = file.readlines()
+
+                for line in lines:
+                    if line.startswith('#'):  # Skip comment lines starting with '#'
+                        continue
+
+                    columns = line.split()
+                    if len(columns) > 1:
+                        data_list.append(float(columns[1]))  # Extract the second column and convert to float
+
+            data_lists.append(data_list)  # Add the data list to the main list
+
+            # Print the extracted data lists
+        for i, data_list in enumerate(data_lists):
+            print("Data list", i + 1, ":", len(data_list))
 
     def time_constant_cal(self):
         directory = './time_constant_helicities'  # Replace with the actual directory path
