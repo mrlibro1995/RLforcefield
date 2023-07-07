@@ -97,7 +97,7 @@ class SystemObj:
         ### for the reward we need to use the avg of the helicity file
         directory = '.'  # Replace with the actual directory path
 
-        # Get the list of files in the directory
+        # Get thhe list of files in the directory
         file_names = [file for file in os.listdir(directory) if file == "helix.dat"]
         data_lists = []  # List to store the extracted data
         print(f"file names: {file_names}")
