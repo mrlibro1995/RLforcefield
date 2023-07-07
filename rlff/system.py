@@ -101,8 +101,9 @@ class SystemObj:
         data_lists = []  # List to store the extracted data
         print(f"file names: {file_names}")
         for file_path in file_names:
+            file_path = os.path.join(dir, file_path)
             data_list = []  # List to store the second column data from each file
-
+            print(f"file path: {file_path}")
             with open(file_path, 'r') as file:
                 lines = file.readlines()
 
