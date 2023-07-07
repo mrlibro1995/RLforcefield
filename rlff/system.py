@@ -95,10 +95,9 @@ class SystemObj:
 
         ### second part: read the helix file and use it as the reward
         ### for the reward we need to use the avg of the helicity file
-        directory = '.'  # Replace with the actual directory path
 
         # Get thhe list of files in the directory
-        file_names = [file for file in os.listdir(directory) if file == "helix.dat"]
+        file_names = [file for file in os.listdir(dir) if file == "helix.dat"]
         data_lists = []  # List to store the extracted data
         print(f"file names: {file_names}")
         for file_path in file_names:
