@@ -100,7 +100,7 @@ class SystemObj:
         # Get the list of files in the directory
         file_names = [file for file in os.listdir(directory) if file == "helix.dat"]
         data_lists = []  # List to store the extracted data
-
+        print(f"file names: {file_names}")
         for file_path in file_names:
             data_list = []  # List to store the second column data from each file
 
