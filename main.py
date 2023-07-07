@@ -19,30 +19,28 @@ init_contl = c.Controller(init_sys)
 # init_sys.trajectory_producer(0, 0, 10.0, it_path)
 
 #### Producing Trajectory for time constant, Just for the fist time you add a new system
-directory = 'time_constant'
-it_path = os.path.join(parent_dir, directory)
-os.mkdir(it_path)
-init_sys.trajectory_producer(1, 0, 2.0, it_path)
+# directory = 'time_constant'
+# it_path = os.path.join(parent_dir, directory)
+# os.mkdir(it_path)
+# init_sys.trajectory_producer(id=1, it=0, duration_ns=2.0, path= it_path)
 
 #### Finding the most sensitive atoms (those are performing important role to make system to be helixed
 ### We can ignore those atoms which give fake information like "CL"
 ### To calculate correctly, we need to
-helix_atoms = init_sys.sensitivity_calc("v2_traj.xtc", "v2_helix.dat",
-                                        ['OW', 'HW', 'Cl', 'K'])
-top_sensitive_atoms, gradients = init_contl.sensitive_atoms(helix_atoms, 4)
-alfa = 0.001
-gradients = [x * -alfa for x in gradients]
-
-directory = 'it_0'
-it_path = os.path.join(parent_dir, directory)
-os.mkdir(it_path)
-print("Directory '% s' created" % it_path)
-
-sys = init_contl.systemmodifier_gradient(id=2, it=0, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
-                                         duration_ns=duration_ns,
-                                         path=it_path)
-
-sys.helicity_calc(sys.trj, dir=directory)
+# helix_atoms = init_sys.sensitivity_calc("v2_traj.xtc", "v2_helix.dat",
+#                                         ['OW', 'HW', 'Cl', 'K'])
+# top_sensitive_atoms, gradients = init_contl.sensitive_atoms(helix_atoms, 4)
+# alfa = 0.001
+# gradients = [x * -alfa for x in gradients]
+#
+# directory = 'it_0'
+# it_path = os.path.join(parent_dir, directory)
+# os.mkdir(it_path)
+# print("Directory '% s' created" % it_path)
+#
+# sys = init_contl.systemmodifier_gradient(id=2, it=0, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
+#                                          duration_ns=duration_ns,
+#                                          path=it_path)
 # contl = c.Controller(sys)
 #
 # it = 1
@@ -62,8 +60,6 @@ sys.helicity_calc(sys.trj, dir=directory)
 #
 #     id = id + 1
 #     it = it + 1
-
-
 
 
 #
