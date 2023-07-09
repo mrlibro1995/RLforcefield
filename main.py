@@ -41,7 +41,7 @@ print("Directory '% s' created" % it_path)
 sys = init_contl.systemmodifier_gradient(id=2, it=0, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
                                          duration_ns=duration_ns,
                                          path=it_path)
-sys.helicity_calc(sys.trj, dir=directory)
+reward = sys.helicity_calc(sys.trj, dir=directory)
 # contl = c.Controller(sys)
 #
 # it = 1

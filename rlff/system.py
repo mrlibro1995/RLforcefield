@@ -93,33 +93,11 @@ class SystemObj:
         os.chdir('..')
         print("Finalized working directory: {0}".format(os.getcwd()))
 
+        reward = self.reward_calculation(dir)
         ### second part: read the helix file and use it as the reward
         ### for the reward we need to use the avg of the helicity file
+        return reward
 
-        # Get thhe list of files in the directory
-        file_names = [file for file in os.listdir(dir) if file == "helix.dat"]
-        data_lists = []  # List to store the extracted data
-        print(f"file names: {file_names}")
-        for file_path in file_names:
-            file_path = os.path.join(dir, file_path)
-            data_list = []  # List to store the second column data from each file
-            print(f"file path: {file_path}")
-            with open(file_path, 'r') as file:
-                lines = file.readlines()
-
-                for line in lines:
-                    if line.startswith('#'):  # Skip comment lines starting with '#'
-                        continue
-
-                    columns = line.split()
-                    if len(columns) > 1:
-                        data_list.append(float(columns[1]))  # Extract the second column and convert to float
-
-            data_lists.append(data_list)  # Add the data list to the main list
-
-            # Print the extracted data lists
-        for i, data_list in enumerate(data_lists):
-            print("Data list", i + 1, ":", len(data_list))
 
     def time_constant_cal(self):
         directory = './time_constant_helicities'  # Replace with the actual directory path
@@ -163,32 +141,42 @@ class SystemObj:
         print(f"average of helicities: {average_list}")
         return None
 
-    # def reward_calculation(self):
-    #     helix_values = []
-    #
-    #     with open('helix.dat', 'r') as file:
-    #         for line in file:
-    #             columns = line.split()
-    #             if len(columns) >= 2:
-    #                 try:
-    #                     value = float(columns[1])
-    #                     helix_values.append(value)
-    #                 except ValueError:
-    #                     pass
-    #     # spliting the list of helicities into 4 sections, you can change 4 to more or less
-    #     helix_splited_lists = self.split_list(helix_values,4)
-    #     x_data = np.array([1, 2, 3, 4])
-    #     helix_splited_averages = [sum(row) / len(row) for row in helix_splited_lists]
-    #     params, _ = opt.curve_fit(a * np.exp(-b * x), x_data, y_data)
+    def reward_calculation(self, dir):
+        # Get thhe list of files in the directory
+        file_names = [file for file in os.listdir(dir) if file == "helix.dat"]
+        data_lists = []  # List to store the extracted data
+        print(f"file names: {file_names}")
+        for file_path in file_names:
+            file_path = os.path.join(dir, file_path)
+            data_list = []  # List to store the second column data from each file
+            print(f"file path: {file_path}")
+            with open(file_path, 'r') as file:
+                lines = file.readlines()
 
-    # def split_list(lst, n):
-    #     division_length = len(lst) // n
-    #     remainder = len(lst) % n
-    #
-    #     sublists = [lst[i * division_length + min(i, remainder):(i + 1) * division_length + min(i + 1, remainder)] for i
-    #                 in range(n)]
-    #
-    #     return sublists
+                for line in lines:
+                    if line.startswith('#'):  # Skip comment lines starting with '#'
+                        continue
+
+                    columns = line.split()
+                    if len(columns) > 1:
+                        data_list.append(float(columns[1]))  # Extract the second column and convert to float
+
+            data_lists.append(data_list)  # Add the data list to the main list
+
+            # Print the extracted data lists
+        for i, data_list in enumerate(data_lists):
+            print("Data list", i + 1, ":", data_list)
+
+        avg_h = sum(data_list) / len(data_list)
+        return avg_h
+    def split_list(lst, n):
+        division_length = len(lst) // n
+        remainder = len(lst) % n
+
+        sublists = [lst[i * division_length + min(i, remainder):(i + 1) * division_length + min(i + 1, remainder)] for i
+                    in range(n)]
+
+        return sublists
 
     def sensitivity_calc(self, xtc, helicity, exclude):
 
