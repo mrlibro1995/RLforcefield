@@ -1,16 +1,24 @@
 import os
-from RLforcefield.rlff import RL as rl
 from RLforcefield.rlff import system as s
-from RLforcefield.rlff import controller as c
+from RLforcefield.rlff import RL_qfunction as qf
 import random
 
-#### Initialization
+#### System Initialization
 parent_dir = "/home/mrlibro/Desktop/myprojects/irbbarcelona/rlff/RLforcefield"
 duration_ns = 0.01
+n_atoms = 4
+global_radius = 5
+local_radius = 2
+id = 2
+init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", id)
+qfunc = qf.Q_function(n_atoms, global_radius, local_radius)
+Alpha_gr = 0.001
 
-#### Initilization of the System
-init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", 0)
-init_contl = c.Controller(init_sys)
+### Q-function Initialization
+Alpha_qf = 500
+Gamma_qf = 0.8
+GaussianSigma_first = 10
+GaussianSigma = 2
 
 #### Producing Trajectory for sensitivity calculation, Just for the fist time you add a new system
 # directory = 'sensitivity_xtc'
@@ -29,39 +37,43 @@ init_contl = c.Controller(init_sys)
 ### To calculate correctly, we need to
 helix_atoms = init_sys.sensitivity_calc("v2_traj.xtc", "v2_helix.dat",
                                         ['OW', 'HW', 'Cl', 'K'])
-top_sensitive_atoms, gradients = init_contl.sensitive_atoms(helix_atoms, 4)
-alfa = 0.001
-gradients = [x * -alfa for x in gradients]
-
-directory = 'it_0'
+top_sensitive_atoms, gradients = init_sys.sensitive_atoms(helix_atoms, n_atoms)
+gradients = [x * -Alpha_gr for x in gradients]
+print(gradients)
+directory = 'it_2'
 it_path = os.path.join(parent_dir, directory)
 os.mkdir(it_path)
 print("Directory '% s' created" % it_path)
-
-sys = init_contl.systemmodifier_gradient(id=2, it=0, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
-                                         duration_ns=duration_ns,
-                                         path=it_path)
+sys = init_sys.systemmodifier(id, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
+                              duration_ns=duration_ns,
+                              path=it_path)
 reward = sys.helicity_calc(sys.trj, dir=directory)
-# contl = c.Controller(sys)
-#
-# it = 1
-# id = 2
-#
-# while it < 6:
-#     directory = f'it_{it}'
-#     it_path = os.path.join(parent_dir, directory)
-#     os.mkdir(it_path)
-#     print("Directory '% s' created" % it_path)
-#
-#     sys = init_contl.systemmodifier_gradient(id=id, it=it, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
-#                                            duration_ns=duration_ns,
-#                                            path=it_path)
-#     print(directory)
-#     sys.helicity_calc(sys.trj, dir=directory)
-#
-#     id = id + 1
-#     it = it + 1
+next_adction, info, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward, normalize=True)
 
+id = 3
+
+while id < 6:
+
+    directory = f'it_{id}'
+    it_path = os.path.join(parent_dir, directory)
+    os.mkdir(it_path)
+    print("Directory '% s' created" % it_path)
+
+    random_number = random.random()
+    if random_number>0.1:
+        sys = sys.systemmodifier_gradient(id=id, atoms=top_sensitive_atoms, parameters="sigma",
+                                          change=next_adction,
+                                          duration_ns=duration_ns,
+                                          path=it_path)
+    else:
+        sys = sys.systemmodifier_gradient(id=id, atoms=top_sensitive_atoms, parameters="sigma",
+                                                 change=gradients,
+                                                 duration_ns=duration_ns,
+                                                 path=it_path)
+    sys.helicity_calc(sys.trj, dir=directory)
+    reward = sys.helicity_calc(sys.trj, dir=directory)
+    next_adction, info, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward, normalize=True)
+    id = id + 1
 
 #
 # ###### RL package

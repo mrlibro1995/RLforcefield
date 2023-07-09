@@ -7,9 +7,7 @@ from parmed import load_file
 import gromologist as gml
 import numpy as np
 import os
-import time
 from openmmplumed import PlumedForce
-import scipy.optimize as opt
 
 
 class SystemObj:
@@ -17,14 +15,13 @@ class SystemObj:
         self.topo = topo
         self.pdb = pdb
         self.id = id_sample
-        self.atom_n = 10
-        self.para_n = 1
 
-    def trajectory_producer(self,plumed_file = 'plumed_sens.dat', id=0, it=0, duration_ns: float = 1.0, path: str = "/"):
+
+    def trajectory_producer(self, plumed_file='plumed_sens.dat', id=0, duration_ns: float = 1.0, path: str = "/"):
         # If the trajectory exists already then remove it
-        trajectory_filename = path + "/" + f'output_traj{it}.xtc'
-        chk_filename = path + "/" + f'state_{it}.chk'
-        log_filename = path + "/" + f'output_{it}.log'
+        trajectory_filename = path + "/" + f'output_traj{id}.xtc'
+        chk_filename = path + "/" + f'state_{id}.chk'
+        log_filename = path + "/" + f'output_{id}.log'
         self.trj = trajectory_filename
 
         checkfile = True if os.path.isfile(trajectory_filename) else False
@@ -44,26 +41,26 @@ class SystemObj:
         sys.addForce(barostat)
         simulation = Simulation(modeller.topology, sys, integrator)
 
-        if id == 0: # sensitivity calculation
+        if id == 0:  # sensitivity calculation
             sys.addForce(PlumedForce(open(plumed_file).read()))
-        elif id == 1: # time constant calculation
+        elif id == 1:  # time constant calculation
             print("current directory: " + path)
-            sensitivity_path = path.replace('time_constant','sensitivity_xtc')
+            sensitivity_path = path.replace('time_constant', 'sensitivity_xtc')
             sensitivity_checkpoint = sensitivity_path + "/" + f'state_0.chk'
             print("new directory: " + sensitivity_checkpoint)
             simulation.loadCheckpoint(sensitivity_checkpoint)
             print("checkpoint loaded")
-        elif id == 2: # first iteration
+        elif id == 2:  # first iteration
             simulation.context.setPositions(modeller.positions)
             print(f"minimizing in {id}")
             simulation.minimizeEnergy(maxIterations=400)
             print(f"minimized in {id}")
-        elif id > 2: # second and more iterations, continuing from the already built first trajectory
-            previous_path = path.replace(str(it), str(it - 1))
-            previous_checkpoint = previous_path + "/" + f'state_{it - 1}.chk'
+        elif id > 2:  # second and more iterations, continuing from the already built first trajectory
+            previous_path = path.replace(str(id), str(id - 1))
+            previous_checkpoint = previous_path + "/" + f'state_{id - 1}.chk'
             simulation.loadCheckpoint(previous_checkpoint)
-            print(f"Iteration: {it}")
-            print(f"The checkpoint of iteration {it - 1} is loaded")
+            print(f"Iteration: {id}")
+            print(f"The checkpoint of iteration {id - 1} is loaded")
 
         app = True if os.path.isfile(trajectory_filename) else False
 
@@ -89,15 +86,13 @@ class SystemObj:
         command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + self.pdb
         os.system(command)
         print("Helicity is calculated by: " + command)
-        #self.reward_calculation()
+        # self.reward_calculation()
         os.chdir('..')
         print("Finalized working directory: {0}".format(os.getcwd()))
 
-        reward = self.reward_calculation(dir)
-        ### second part: read the helix file and use it as the reward
-        ### for the reward we need to use the avg of the helicity file
-        return reward
+        self.helicity = self.reward_calculation(dir)
 
+        return self.helicity
 
     def time_constant_cal(self):
         directory = './time_constant_helicities'  # Replace with the actual directory path
@@ -169,14 +164,6 @@ class SystemObj:
 
         avg_h = sum(data_list) / len(data_list)
         return avg_h
-    def split_list(lst, n):
-        division_length = len(lst) // n
-        remainder = len(lst) % n
-
-        sublists = [lst[i * division_length + min(i, remainder):(i + 1) * division_length + min(i + 1, remainder)] for i
-                    in range(n)]
-
-        return sublists
 
     def sensitivity_calc(self, xtc, helicity, exclude):
 
@@ -204,5 +191,35 @@ class SystemObj:
                                     0]])
         # print(helix_atoms)
         return hel_by_atom
+
+    def systemmodifier(self, id: int, atoms: list, change: list, parameters: str,
+                                duration_ns: int = 1.0,
+                                path: str = "/"):
+        topo = gml.Top(self.sys.topo, pdb=self.sys.pdb)
+        topo.check_pdb()
+        atoms_changes = [[x, y] for x, y in zip(atoms, change)]
+        for a_c in atoms_changes:
+            if (parameters == "sigma"):
+                topo.parameters.edit_atomtype(a_c[0], mod_sigma=a_c[1])
+        topo.save_top(path + "/" + str(id) + ".top")
+        topo.pdb.save_pdb(path + "/" + str(id) + ".pdb")
+        newsys = SystemObj(path + "/" + str(id) + ".top", path + "/" + str(id) + ".pdb", id)
+        newsys.trajectory_producer(id=newsys.id, duration_ns=duration_ns, path=path)
+        return newsys
+
+
+    def sensitive_atoms(self, hel_atoms, n_top):
+        '''''''''''''''''''''''''''''''''''''''''''''''
+        returns back the nsss_top sensitive values which 
+        are calculated in sensitivity_calc function.1
+        according to absolute value of the list.
+        '''''''''''''''''''''''''''''''''''''''''''''''
+        temp = sorted(hel_atoms, key=lambda x: abs(x[1]))
+        top_vals = temp[-n_top:]
+        atoms, changes = zip(*top_vals)
+        atoms, changes = list(atoms), list(changes)
+        changes = changes / np.linalg.norm(changes)
+
+        return atoms, changes
 
     # def time_constant_calc(self):
