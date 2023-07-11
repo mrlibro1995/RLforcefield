@@ -5,14 +5,15 @@ import random
 
 #### System Initialization
 parent_dir = "/home/mrlibro/Desktop/myprojects/irbbarcelona/rlff/RLforcefield"
-duration_ns = 0.01
 n_atoms = 4
 global_radius = 5
 local_radius = 2
 id = 2
 init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", id)
-qfunc = qf.Q_function(n_atoms, global_radius, local_radius)
-Alpha_gr = 0.001
+qfunc = qf.Q_function(n_atoms, global_radius, local_radius,grid_step=0.003)
+Alpha_gr = 0.01
+time_constant = 3.0 #nano-second
+
 
 ### Q-function Initialization
 Alpha_qf = 500
@@ -45,10 +46,10 @@ it_path = os.path.join(parent_dir, directory)
 os.mkdir(it_path)
 print("Directory '% s' created" % it_path)
 sys = init_sys.systemmodifier(id, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
-                              duration_ns=duration_ns,
+                              duration_ns=time_constant,
                               path=it_path)
-reward = sys.helicity_calc(sys.trj, dir=directory)
-next_adction, info, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward, normalize=True)
+reward = sys.helix_reward_calc(sys.trj, dir=directory,time_constant=time_constant)
+next_action, info, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward, normalize=True)
 
 id = 3
 
@@ -60,16 +61,28 @@ while id < 6:
     print("Directory '% s' created" % it_path)
 
     random_number = random.random()
-    if random_number>0.1:
-        sys = sys.systemmodifier_gradient(id=id, atoms=top_sensitive_atoms, parameters="sigma",
-                                          change=next_adction,
-                                          duration_ns=duration_ns,
+    if random_number > 0.3: ### Walk based on RL decision
+        changes = qfunc.action2changes_convertor(next_action)
+        sys = sys.systemmodifier(id=id, atoms=top_sensitive_atoms, parameters="sigma",
+                                          change=changes,
+                                          duration_ns=time_constant,
                                           path=it_path)
-    else:
-        sys = sys.systemmodifier_gradient(id=id, atoms=top_sensitive_atoms, parameters="sigma",
-                                                 change=gradients,
-                                                 duration_ns=duration_ns,
-                                                 path=it_path)
+        reward = sys.helicity_calc(sys.trj, dir=directory)
+        qfunc.current_location = tuple(x + y for x, y in zip(qfunc.current_location, next_action))
+        next_action, info, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward,
+                                                        normalize=True)
+
+    elif random_number > 0.1 and random_number <= 0.3: ### Walk based on Gradient Discent
+        changes = qfunc.gradients2action_convertor(gradients)
+        changes = qfunc.action2changes_convertor(changes)
+        sys = sys.systemmodifier(id=id, atoms=top_sensitive_atoms, parameters="sigma",
+                                          change=changes,
+                                          duration_ns=time_constant,
+                                          path=it_path)
+        reward = sys.helix_reward_calc(sys.trj, dir=directory)
+
+    else: ### Walk based on Randomness
+        print("Random Walk")
     sys.helicity_calc(sys.trj, dir=directory)
     reward = sys.helicity_calc(sys.trj, dir=directory)
     next_adction, info, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward, normalize=True)

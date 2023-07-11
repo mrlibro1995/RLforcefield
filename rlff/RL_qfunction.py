@@ -4,7 +4,7 @@ import itertools
 
 
 class Q_function:
-    def __init__(self, global_dimensions, global_radius, local_radius):
+    def __init__(self, global_dimensions, global_radius, local_radius, grid_step):
         self.global_dimensions = global_dimensions
         self.global_radius = global_radius
         self.local_radius = local_radius
@@ -12,6 +12,7 @@ class Q_function:
         self.global_weights = self._nd_gaussian(10, global_radius, global_dimensions, False)
         self.global_qvalues = np.zeros(shape=(global_radius * 2 + 1,) * global_dimensions)
         self.global_qvalues[self.current_location] = 20
+        self.grid_step = grid_step
 
         self.weights_series = []
         self.local_weights_series = []
@@ -171,3 +172,11 @@ class Q_function:
         print("average of local weights: " + str(self._recursive_average(weights_local)))
 
         return next_action, info, data
+
+    def gradients2action_convertor(self, gradients):
+        action = [int(x / 0.03) for x in gradients]
+        return action
+
+    def action2changes_convertor(self, action):
+        changes = [x * 0.03 for x in action]
+        return changes

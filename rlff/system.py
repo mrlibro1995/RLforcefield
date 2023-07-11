@@ -77,7 +77,7 @@ class SystemObj:
         except:
             simulation.loadCheckpoint(chk_filename)
 
-    def helicity_calc(self, xtc, dir):
+    def helix_reward_calc(self, xtc, dir, time_constant):
         ### first part: calculation of helicity and save the helix file
         command = "cp plumed.dat protein.pdb " + dir + "/"
         os.system(command)
@@ -90,7 +90,7 @@ class SystemObj:
         os.chdir('..')
         print("Finalized working directory: {0}".format(os.getcwd()))
 
-        self.helicity = self.reward_calculation(dir)
+        self.helicity = self.reward_calculation(dir,time_constant)
 
         return self.helicity
 
@@ -136,7 +136,9 @@ class SystemObj:
         print(f"average of helicities: {average_list}")
         return None
 
-    def reward_calculation(self, dir):
+    def reward_calculation(self, dir,time_constant):
+        time_constant = time_constant * 100
+        time1 = time_constant + 1.5
         # Get thhe list of files in the directory
         file_names = [file for file in os.listdir(dir) if file == "helix.dat"]
         data_lists = []  # List to store the extracted data
@@ -162,8 +164,12 @@ class SystemObj:
         for i, data_list in enumerate(data_lists):
             print("Data list", i + 1, ":", data_list)
 
-        avg_h = sum(data_list) / len(data_list)
-        return avg_h
+        h1_index = data_list[int(time1 - (time1 / 5)):int(time1)]
+        h1 = sum(h1_index) / len(h1_index)
+        numerator = (h1 - data_list[0])
+        denominator = 1 - math.exp(-(time1) / time_constant)
+        reward = data_list[0] + numerator / denominator
+        return reward
 
     def sensitivity_calc(self, xtc, helicity, exclude):
 
@@ -222,4 +228,3 @@ class SystemObj:
 
         return atoms, changes
 
-    # def time_constant_calc(self):
