@@ -201,7 +201,7 @@ class SystemObj:
     def systemmodifier(self, id: int, atoms: list, change: list, parameters: str,
                                 duration_ns: int = 1.0,
                                 path: str = "/"):
-        topo = gml.Top(self.sys.topo, pdb=self.sys.pdb)
+        topo = gml.Top(self.topo, pdb=self.pdb)
         topo.check_pdb()
         atoms_changes = [[x, y] for x, y in zip(atoms, change)]
         for a_c in atoms_changes:
