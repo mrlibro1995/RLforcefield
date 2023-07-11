@@ -95,7 +95,7 @@ class Q_function:
         return average
 
     def q_value_calculation(self, normalize):
-        mins, maxs = self._check_borders(self.current_location, self.local_radius, self.global_radius)
+        mins, maxs = self._check_borders(self.current_location)
         gaus = self._nd_gaussian(3, self.local_radius, self.global_dimensions, normalize)
 
         # Process of creating local weights: it needs to be checked if it's not out of bounds
@@ -115,14 +115,14 @@ class Q_function:
         Gaus = self._nd_gaussian(gaussian_sigma, self.local_radius, self.global_dimensions, normalize)
 
         if id == 0:
-            mins, maxs = self._check_borders(self.current_location, self.local_radius, self.global_radius)
+            mins, maxs = self._check_borders(self.current_location)
             factor = self.global_qvalues[self.current_location] / self.q_value_calculation(self.global_weights,
                                                                                            self.current_location,
                                                                                            self.local_radius,
                                                                                            self.global_dimensions, normalize)
             self.global_weights = self.global_weights * factor
         else:
-            mins, maxs = self._check_borders(self.current_location, self.local_radius, self.global_radius)
+            mins, maxs = self._check_borders(self.current_location)
 
         ranges = [(x, y + 1) for x, y in zip(mins, maxs)]
         combinations = list(itertools.product(*[range(r[0], r[1]) for r in ranges]))
