@@ -53,7 +53,7 @@ next_action, info, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianS
 
 id = 3
 
-while id < 6:
+while id < 13:
 
     directory = f'it_{id}'
     it_path = os.path.join(parent_dir, directory)
@@ -61,31 +61,27 @@ while id < 6:
     print("Directory '% s' created" % it_path)
 
     random_number = random.random()
+
     if random_number > 0.3: ### Walk based on RL decision
         changes = qfunc.action2changes_convertor(next_action)
-        sys = sys.systemmodifier(id=id, atoms=top_sensitive_atoms, parameters="sigma",
-                                          change=changes,
-                                          duration_ns=time_constant,
-                                          path=it_path)
-        reward = sys.helicity_calc(sys.trj, dir=directory)
-        qfunc.current_location = tuple(x + y for x, y in zip(qfunc.current_location, next_action))
-        next_action, info, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward,
-                                                        normalize=True)
 
-    elif random_number > 0.1 and random_number <= 0.3: ### Walk based on Gradient Discent
-        changes = qfunc.gradients2action_convertor(gradients)
-        changes = qfunc.action2changes_convertor(changes)
-        sys = sys.systemmodifier(id=id, atoms=top_sensitive_atoms, parameters="sigma",
-                                          change=changes,
-                                          duration_ns=time_constant,
-                                          path=it_path)
-        reward = sys.helix_reward_calc(sys.trj, dir=directory)
+    elif random_number > 0.1 and random_number <= 0.3:  ### Walk based on Gradient Discent
+        next_action = qfunc.gradients2action_convertor(gradients)
+        changes = qfunc.action2changes_convertor(next_action)
 
-    else: ### Walk based on Randomness
+    else:  ### Walk based on Randomness
         print("Random Walk")
-    sys.helicity_calc(sys.trj, dir=directory)
+        next_action = (random.randint(-local_radius, local_radius) for _ in range(n_atoms))
+        changes = qfunc.action2changes_convertor(next_action)
+
+    sys = sys.systemmodifier(id=id, atoms=top_sensitive_atoms, parameters="sigma",
+                                      change=changes,
+                                      duration_ns=time_constant,
+                                      path=it_path)
     reward = sys.helicity_calc(sys.trj, dir=directory)
-    next_adction, info, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward, normalize=True)
+    qfunc.current_location = tuple(x + y for x, y in zip(qfunc.current_location, next_action))
+    next_action, info, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward,
+                                                    normalize=True)
     id = id + 1
 
 #
