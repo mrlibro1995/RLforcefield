@@ -132,7 +132,7 @@ class Q_function:
                                                                         self.global_dimensions,
                                                                         normalize)
 
-        # Process of creating local qvalues: it needs to be checked if it's not out of bounds
+        # Process of creating local qvalues: it needs to be checked if it's not out of boundss
         # and if it is it should be split
         ranges = [(x, y) for x, y in zip(mins, maxs)]
         slices_list = [slice(min, max + 1) for min, max in ranges]

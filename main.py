@@ -21,7 +21,7 @@ Gamma_qf = 0.8
 GaussianSigma_first = 10
 GaussianSigma = 2
 
-#### Producing Trajectory for sensitivity calculation, Just for the fist time you add a new system
+#### Producing Trajectory for sensitivity calculation, Just for the fist time you add a new systemm
 # directory = 'sensitivity_xtc'
 # it_path = os.path.join(parent_dir, directory)
 # os.mkdir(it_path)
