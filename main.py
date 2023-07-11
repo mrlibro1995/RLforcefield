@@ -10,7 +10,7 @@ global_radius = 5
 local_radius = 2
 id = 2
 init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", id)
-qfunc = qf.Q_function(n_atoms, global_radius, local_radius,grid_step=0.003)
+qfunc = qf.Q_function(n_atoms, global_radius, local_radius,grid_step=0.03)
 Alpha_gr = 0.01
 time_constant = 3.0 #nano-second
 

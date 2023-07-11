@@ -174,9 +174,9 @@ class Q_function:
         return next_action, info, data
 
     def gradients2action_convertor(self, gradients):
-        action = [int(x / 0.03) for x in gradients]
+        action = [int(x / self.grid_step) for x in gradients]
         return action
 
     def action2changes_convertor(self, action):
-        changes = [x * 0.03 for x in action]
+        changes = [x * self.grid_step for x in action]
         return changes
