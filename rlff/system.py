@@ -42,9 +42,11 @@ class SystemObj:
         simulation = Simulation(modeller.topology, sys, integrator)
 
         if id == 0:  # sensitivity calculation
+            print("")
             print("Trajectory for Sensitivity Calculation Process !!!!")
             sys.addForce(PlumedForce(open(plumed_file).read()))
         elif id == 1:  # time constant calculation
+            print("")
             print("Trajectory for Time Constant Process !!!!")
             print("current directory: " + path)
             sensitivity_path = path.replace('time_constant', 'sensitivity_xtc')
@@ -52,12 +54,15 @@ class SystemObj:
             print("new directory: " + sensitivity_checkpoint)
             simulation.loadCheckpoint(sensitivity_checkpoint)
             print("checkpoint loaded")
+            print("")
         elif id == 2:  # first iteration
+            print("")
             print("First Iteration !!!!")
             simulation.context.setPositions(modeller.positions)
             print(f"minimizing in {id}")
             simulation.minimizeEnergy(maxIterations=400)
             print(f"minimized in {id}")
+            print("")
         elif id > 2:  # second and more iterations, continuing from the already built first trajectory
             print(f"{id} Iteration !!!!")
             previous_path = path.replace(str(id), str(id - 1))
@@ -65,6 +70,7 @@ class SystemObj:
             simulation.loadCheckpoint(previous_checkpoint)
             print(f"Iteration: {id}")
             print(f"The checkpoint of iteration {id - 1} is loaded")
+            print("")
 
         app = True if os.path.isfile(trajectory_filename) else False
 

@@ -18,6 +18,7 @@ class Q_function:
         self.local_weights_series = []
         self.info_series = []
         self.q_values_series = []
+        self.locations_list = []
         self.data_series = [[0] * 6 for _ in range(30)]
 
     def _nd_gaussian(self, sigma, radius, n, normalize):
@@ -157,11 +158,10 @@ class Q_function:
         data.append(round(diff, 2))
         data.append(round(Delta, 2))
         data.append(round(self._recursive_average(weights_update),4))
-        data.append(round(self._recursive_average(weights_update),4))
-        print("average of updating weights values: " + str(self._recursive_average(weights_update)))
-        print("average of local weights: " + str(self._recursive_average(weights_local)))
+        data.append(round(self._recursive_average(weights_local),4))
 
-        return next_action, data
+        self.locations_list.append(self.current_location)
+        return next_action, data, self.locations_list
 
     def gradients2action_convertor(self, gradients):
         action = [int(x / self.grid_step) for x in gradients]

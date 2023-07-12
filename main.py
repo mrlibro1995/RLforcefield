@@ -20,19 +20,9 @@ Alpha_qf = 500
 Gamma_qf = 0.8
 GaussianSigma_first = 10
 GaussianSigma = 2
+locations_list = []
 
-print("############# INITIAL VALUES ###############")
-print("")
-print(f"Number of Atoms (Dimensions of the Simulation): {n_atoms}")
-print(f"Global Radius (Changes range in every dimension): {global_radius}")
-print(f"Local Radius: {local_radius}")
-print(f"Alpha for Gradients: {Alpha_gr}")
-print(f"Alpha for Q-Function: {Alpha_qf}")
-print(f"Gamma for Q-Function: {Gamma_qf}")
-print(f"Gassian Sigma for first Iteration{GaussianSigma_first}")
-print(f"Gassian Sigma for next Iterations{GaussianSigma}")
-print("")
-print("#############################################")
+
 
 #### Producing Trajectory for sensitivity calculation, Just for the fist time you add a new systemm
 # directory = 'sensitivity_xtc'
@@ -57,12 +47,26 @@ directory = 'it_2'
 it_path = os.path.join(parent_dir, directory)
 os.mkdir(it_path)
 
+print("############# INITIAL VALUES ###############")
+print("")
+print(f"Number of Atoms (Dimensions of the Simulation): {n_atoms}")
+print(f"Global Radius (Changes range in every dimension): {global_radius}")
+print(f"Local Radius: {local_radius}")
+print(f"Gradients: {gradients}")
+print(f"Alpha for Gradients: {Alpha_gr}")
+print(f"Alpha for Q-Function: {Alpha_qf}")
+print(f"Gamma for Q-Function: {Gamma_qf}")
+print(f"Gassian Sigma for first Iteration: {GaussianSigma_first}")
+print(f"Gassian Sigma for next Iterations: {GaussianSigma}")
+print("")
+print("#############################################")
+
 sys = init_sys.systemmodifier(id, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
                               duration_ns=time_constant,
                               path=it_path)
 
 reward = sys.helix_reward_calc(sys.trj, dir=directory,time_constant=time_constant)
-next_action, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward, normalize=True)
+next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward, normalize=True)
 
 print(f"######## {id} ITERATION RESULT ########")
 print("                                        ")
@@ -74,8 +78,12 @@ print(f"Diff: {data[3]}")
 print(f"Delta: {data[4]}")
 print(f"Avg Updating Weights: {data[5]}")
 print(f"Avg Local Weights: {data[6]}")
+print(f"Location: {locations_list[-1]}")
+print("List of Locations: ")
+for loc in locations_list:
+    print(loc)
 print("                                        ")
-print("Fist movement Completed !!!!!")
+print("First movement Completed !!!!!")
 
 id = 3
 while id < 13:
@@ -107,7 +115,7 @@ while id < 13:
                                       path=it_path)
     reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant)
     qfunc.current_location = tuple(x + y for x, y in zip(qfunc.current_location, next_action))
-    next_action, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward,
+    next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward,
                                                     normalize=True)
 
     print(f"######## {id} ITERATION RESULT ########")
@@ -120,6 +128,10 @@ while id < 13:
     print(f"Delta: {data[4]}")
     print(f"Avg Updating Weights: {data[5]}")
     print(f"Avg Local Weights: {data[6]}")
+    print(f"Location: {locations_list[-1]}")
+    print("List of Locations: ")
+    for loc in locations_list:
+        print(loc)
     print("                                        ")
     print("Fist movement Completed !!!!!")
 
