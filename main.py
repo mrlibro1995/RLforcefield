@@ -80,7 +80,7 @@ while id < 13:
                                       change=changes,
                                       duration_ns=time_constant,
                                       path=it_path)
-    reward = sys.helix_reward_calc(sys.trj, dir=directory)
+    reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant)
     qfunc.current_location = tuple(x + y for x, y in zip(qfunc.current_location, next_action))
     next_action, info, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward,
                                                     normalize=True)
