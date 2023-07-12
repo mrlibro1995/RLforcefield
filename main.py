@@ -21,6 +21,19 @@ Gamma_qf = 0.8
 GaussianSigma_first = 10
 GaussianSigma = 2
 
+print("############# INITIAL VALUES ###############")
+print("")
+print(f"Number of Atoms (Dimensions of the Simulation): {n_atoms}")
+print(f"Global Radius (Changes range in every dimension): {global_radius}")
+print(f"Local Radius: {local_radius}")
+print(f"Alpha for Gradients: {Alpha_gr}")
+print(f"Alpha for Q-Function: {Alpha_qf}")
+print(f"Gamma for Q-Function: {Gamma_qf}")
+print(f"Gassian Sigma for first Iteration{GaussianSigma_first}")
+print(f"Gassian Sigma for next Iterations{GaussianSigma}")
+print("")
+print("#############################################")
+
 #### Producing Trajectory for sensitivity calculation, Just for the fist time you add a new systemm
 # directory = 'sensitivity_xtc'
 # it_path = os.path.join(parent_dir, directory)
@@ -40,85 +53,74 @@ helix_atoms = init_sys.sensitivity_calc("v2_traj.xtc", "v2_helix.dat",
                                         ['OW', 'HW', 'Cl', 'K'])
 top_sensitive_atoms, gradients = init_sys.sensitive_atoms(helix_atoms, n_atoms)
 gradients = [x * -Alpha_gr for x in gradients]
-print(gradients)
 directory = 'it_2'
 it_path = os.path.join(parent_dir, directory)
 os.mkdir(it_path)
-print("Directory '% s' created" % it_path)
+
 sys = init_sys.systemmodifier(id, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
                               duration_ns=time_constant,
                               path=it_path)
-reward = sys.helix_reward_calc(sys.trj, dir=directory,time_constant=time_constant)
-next_action, info, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward, normalize=True)
-print("Fist movement Completed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-id = 3
 
+reward = sys.helix_reward_calc(sys.trj, dir=directory,time_constant=time_constant)
+next_action, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward, normalize=True)
+
+print(f"######## {id} ITERATION RESULT ########")
+print("                                        ")
+print(f"Reward: {reward}")
+print(f"Next action: {next_action}")
+print(f"Current Q-value: {data[1]}")
+print(f"Next Q-value: {data[2]}")
+print(f"Diff: {data[3]}")
+print(f"Delta: {data[4]}")
+print(f"Avg Updating Weights: {data[5]}")
+print(f"Avg Local Weights: {data[6]}")
+print("                                        ")
+print("Fist movement Completed !!!!!")
+
+id = 3
 while id < 13:
 
     directory = f'it_{id}'
     it_path = os.path.join(parent_dir, directory)
     os.mkdir(it_path)
-    print("Directory '% s' created" % it_path)
 
     random_number = random.random()
-
+    print(f"Epsilon Random Number: {random_number}")
     if random_number > 0.3: ### Walk based on RL decision
         changes = qfunc.action2changes_convertor(next_action)
-
+        print(f"RL Based Walk with: {changes}")
+        print("")
     elif random_number > 0.1 and random_number <= 0.3:  ### Walk based on Gradient Discent
         next_action = qfunc.gradients2action_convertor(gradients)
         changes = qfunc.action2changes_convertor(next_action)
-
+        print(f"Gradients Based Walk with: {changes}")
+        print("")
     else:  ### Walk based on Randomness
-        print("Random Walk")
         next_action = (random.randint(-local_radius, local_radius) for _ in range(n_atoms))
         changes = qfunc.action2changes_convertor(next_action)
+        print(f"Random Based Walk with: {changes}")
+        print("")
 
-
-    print("STILLL RUNNNNING WELLLLLL!!!!!!!!!!!!!!!!!1")
     sys = sys.systemmodifier(id=id, atoms=top_sensitive_atoms, parameters="sigma",
                                       change=changes,
                                       duration_ns=time_constant,
                                       path=it_path)
     reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant)
     qfunc.current_location = tuple(x + y for x, y in zip(qfunc.current_location, next_action))
-    next_action, info, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward,
+    next_action, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward,
                                                     normalize=True)
-    id = id + 1
 
-#
-# ####### RL package
-# # Hyperparameters
-# alpha = 0.1
-# gamma = 0.6
-# epsilon = 0.1
-#
-# # For plotting metrics
-# all_epochs = []
-# all_penalties = []
-#
-# # Instantiation from the Environment
-# rlenv = rl.ForceFieldEnv(init_sys, init_contl, len(atoms), 5)
-#
-# done = False
-#
-# while not done:
-#     if random.uniform(0, 1) < epsilon:
-#         action = rlenv.action_space.sample()  # Explore action space
-#     else:
-#         action = np.argmax(q_table[state])  # Exploit learned values
-#
-#     next_state, reward, done, info = env.step(action)
-#
-#     old_value = q_table[state, action]
-#     next_max = np.max(q_table[next_state])
-#
-#     new_value = (1 - alpha) * old_value + alpha * (reward + gamma * next_max)
-#     q_table[state, action] = new_value
-#
-#     if reward == -10:
-#         penalties += 1
-#
-#     state = next_state
-#     epochs += 1
-#
+    print(f"######## {id} ITERATION RESULT ########")
+    print("                                        ")
+    print(f"Reward: {reward}")
+    print(f"Next action: {next_action}")
+    print(f"Current Q-value: {data[1]}")
+    print(f"Next Q-value: {data[2]}")
+    print(f"Diff: {data[3]}")
+    print(f"Delta: {data[4]}")
+    print(f"Avg Updating Weights: {data[5]}")
+    print(f"Avg Local Weights: {data[6]}")
+    print("                                        ")
+    print("Fist movement Completed !!!!!")
+
+    id = id + 1

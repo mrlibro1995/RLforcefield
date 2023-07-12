@@ -150,23 +150,18 @@ class Q_function:
         self.global_weights = self._operation_matrices_with_location(self.global_weights, weights_update,
                                                                      self.current_location, 'sum')
 
-        info = []
-        info.append(f"reward: {round(reward, 2)}")
-        info.append(f"q_val: {round(current_qval, 2)}")
-        info.append(f"next q_val: {round(next_qval, 2)}")
-        info.append(f"diff: {round(diff, 2)}")
-        info.append(f"Delta: {round(Delta, 2)}")
-
         data = []
         data.append(round(reward, 2))
         data.append(round(current_qval, 2))
         data.append(round(next_qval, 2))
         data.append(round(diff, 2))
         data.append(round(Delta, 2))
+        data.append(round(self._recursive_average(weights_update),4))
+        data.append(round(self._recursive_average(weights_update),4))
         print("average of updating weights values: " + str(self._recursive_average(weights_update)))
         print("average of local weights: " + str(self._recursive_average(weights_local)))
 
-        return next_action, info, data
+        return next_action, data
 
     def gradients2action_convertor(self, gradients):
         action = [int(x / self.grid_step) for x in gradients]

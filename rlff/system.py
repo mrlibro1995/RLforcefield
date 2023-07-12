@@ -42,8 +42,10 @@ class SystemObj:
         simulation = Simulation(modeller.topology, sys, integrator)
 
         if id == 0:  # sensitivity calculation
+            print("Trajectory for Sensitivity Calculation Process !!!!")
             sys.addForce(PlumedForce(open(plumed_file).read()))
         elif id == 1:  # time constant calculation
+            print("Trajectory for Time Constant Process !!!!")
             print("current directory: " + path)
             sensitivity_path = path.replace('time_constant', 'sensitivity_xtc')
             sensitivity_checkpoint = sensitivity_path + "/" + f'state_0.chk'
@@ -51,11 +53,13 @@ class SystemObj:
             simulation.loadCheckpoint(sensitivity_checkpoint)
             print("checkpoint loaded")
         elif id == 2:  # first iteration
+            print("First Iteration !!!!")
             simulation.context.setPositions(modeller.positions)
             print(f"minimizing in {id}")
             simulation.minimizeEnergy(maxIterations=400)
             print(f"minimized in {id}")
         elif id > 2:  # second and more iterations, continuing from the already built first trajectory
+            print(f"{id} Iteration !!!!")
             previous_path = path.replace(str(id), str(id - 1))
             previous_checkpoint = previous_path + "/" + f'state_{id - 1}.chk'
             simulation.loadCheckpoint(previous_checkpoint)
@@ -195,7 +199,6 @@ class SystemObj:
             hel_by_atom.append([td.mods[i].type,
                                 td.discrete_free_energy_derivatives[key][1] - td.discrete_free_energy_derivatives[key][
                                     0]])
-        # print(helix_atoms)
         return hel_by_atom
 
     def systemmodifier(self, id: int, atoms: list, change: list, parameters: str,
