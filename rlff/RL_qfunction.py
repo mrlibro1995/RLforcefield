@@ -106,7 +106,7 @@ class Q_function:
 
         local_weights_copy = np.copy(local_weights)
         loc_tuple = tuple(self.local_radius for _ in range(self.global_dimensions))
-        gaus_weights = self.operation_matrices_with_location(local_weights_copy, gaus, loc_tuple, 'mul')
+        gaus_weights = self._operation_matrices_with_location(local_weights_copy, gaus, loc_tuple, 'mul')
         qval = np.sum(gaus_weights)
         return qval
 
