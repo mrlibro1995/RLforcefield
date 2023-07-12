@@ -59,7 +59,7 @@ class Q_function:
         global_loc_min = [x - self.local_radius for x in loc]
         global_loc_max = [x + self.local_radius for x in loc]
         global_loc_min = [value if value >= 0 else 0 for value in global_loc_min]
-        global_loc_max = [value if value < self.globa_radius * 2 + 1 else self.globa_radius * 2 for value in
+        global_loc_max = [value if value < self.global_radius * 2 + 1 else self.global_radius * 2 for value in
                           global_loc_max]
         return global_loc_min, global_loc_max
 
