@@ -87,7 +87,7 @@ while id < 13:
     id = id + 1
 
 #
-# ###### RL package
+# ####### RL package
 # # Hyperparameters
 # alpha = 0.1
 # gamma = 0.6
