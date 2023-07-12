@@ -50,7 +50,7 @@ sys = init_sys.systemmodifier(id, atoms=top_sensitive_atoms, parameters="sigma",
                               path=it_path)
 reward = sys.helix_reward_calc(sys.trj, dir=directory,time_constant=time_constant)
 next_action, info, data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward, normalize=True)
-
+print("Fist movement Completed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 id = 3
 
 while id < 13:
@@ -74,6 +74,8 @@ while id < 13:
         next_action = (random.randint(-local_radius, local_radius) for _ in range(n_atoms))
         changes = qfunc.action2changes_convertor(next_action)
 
+
+    print("STILLL RUNNNNING WELLLLLL!!!!!!!!!!!!!!!!!1")
     sys = sys.systemmodifier(id=id, atoms=top_sensitive_atoms, parameters="sigma",
                                       change=changes,
                                       duration_ns=time_constant,

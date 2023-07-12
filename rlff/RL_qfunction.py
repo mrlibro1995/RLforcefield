@@ -94,8 +94,8 @@ class Q_function:
         average = np.mean(my_array)
         return average
 
-    def q_value_calculation(self, normalize):
-        mins, maxs = self._check_borders(self.current_location)
+    def q_value_calculation(self, loc, normalize):
+        mins, maxs = self._check_borders(loc)
         gaus = self._nd_gaussian(3, self.local_radius, self.global_dimensions, normalize)
 
         # Process of creating local weights: it needs to be checked if it's not out of bounds
@@ -114,12 +114,10 @@ class Q_function:
         global_qvalues_copy = np.copy(self.global_qvalues)
         Gaus = self._nd_gaussian(gaussian_sigma, self.local_radius, self.global_dimensions, normalize)
 
-        if id == 0:
+        if id == 2:
             mins, maxs = self._check_borders(self.current_location)
-            factor = self.global_qvalues[self.current_location] / self.q_value_calculation(self.global_weights,
-                                                                                           self.current_location,
-                                                                                           self.local_radius,
-                                                                                           self.global_dimensions, normalize)
+            factor = self.global_qvalues[self.current_location] / self.q_value_calculation(self.current_location,
+                                                                                           normalize)
             self.global_weights = self.global_weights * factor
         else:
             mins, maxs = self._check_borders(self.current_location)
@@ -127,10 +125,7 @@ class Q_function:
         ranges = [(x, y + 1) for x, y in zip(mins, maxs)]
         combinations = list(itertools.product(*[range(r[0], r[1]) for r in ranges]))
         for idx, combination in enumerate(combinations):
-            global_qvalues_copy[combination] = self.q_value_calculation(self.global_weights, combination,
-                                                                        self.local_radius,
-                                                                        self.global_dimensions,
-                                                                        normalize)
+            global_qvalues_copy[combination] = self.q_value_calculation(combination, normalize)
 
         # Process of creating local qvalues: it needs to be checked if it's not out of boundss
         # and if it is it should be split
