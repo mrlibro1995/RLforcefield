@@ -135,7 +135,7 @@ while id < 13:
     qfunc.current_location = tuple(x + y for x, y in zip(qfunc.current_location, next_action))
     next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward,
                                                     normalize=True)
-
+    infolist = []
     print(f"######## {id} ITERATION RESULT ########")
     print("                                        ")
     infolist.append(f"Reward: {reward}")
