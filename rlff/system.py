@@ -86,7 +86,7 @@ class SystemObj:
         except:
             simulation.loadCheckpoint(chk_filename)
 
-    def helix_reward_calc(self, xtc, dir, time_constant):
+    def helix_reward_calc(self, xtc, dir, time_constant, run_time):
         ### first part: calculation of helicity and save the helix file
         command = "cp plumed.dat protein.pdb " + dir + "/"
         os.system(command)
@@ -94,7 +94,7 @@ class SystemObj:
         command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + self.pdb
         os.system(command)
         os.chdir('..')
-        self.helicity = self.reward_calculation(dir, time_constant)
+        self.helicity = self.reward_calculation(dir, time_constant,run_time)
         return self.helicity
 
     def time_constant_cal(self):
@@ -139,9 +139,9 @@ class SystemObj:
         print(f"average of helicities: {average_list}")
         return None
 
-    def reward_calculation(self, dir, time_constant):
-        time_constant = time_constant * 100
-        time1 = time_constant + 100
+    def reward_calculation(self, dir, time_constant, run_time):
+        time_constant *= 100
+        run_time *= 100
         # Get thhe list of files in the directory
         file_names = [file for file in os.listdir(dir) if file == "helix.dat"]
         data_lists = []  # List to store the extracted data
@@ -161,10 +161,10 @@ class SystemObj:
 
             data_lists.append(data_list)  # Add the data list to the main list
 
-        h1_index = data_list[int(time1 - (time1 / 5)):int(time1)]
+        h1_index = data_list[int(run_time - (run_time / 5)):int(run_time)]
         h1 = sum(h1_index) / len(h1_index)
         numerator = (h1 - data_list[0])
-        denominator = 1 - math.exp(-(time1) / time_constant)
+        denominator = 1 - math.exp(-(run_time) / time_constant)
         reward = data_list[0] + numerator / denominator
         return reward
 

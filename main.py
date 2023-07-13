@@ -10,10 +10,10 @@ global_radius = 5
 local_radius = 2
 id = 2
 init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", id)
-qfunc = qf.Q_function(n_atoms, global_radius, local_radius,grid_step=0.03)
+qfunc = qf.Q_function(n_atoms, global_radius, local_radius, grid_step=0.03)
 Alpha_gr = 0.1
-time_constant = 1.0 #nano-second
-
+time_constant = 0.5  # nano-second
+run_time = time_constant + 0.25
 
 ### Q-function Initialization
 Alpha_qf = 500
@@ -21,8 +21,6 @@ Gamma_qf = 0.8
 GaussianSigma_first = 10
 GaussianSigma = 2
 locations_list = []
-
-
 
 #### Producing Trajectory for sensitivity calculation, Just for the fist time you add a new systemm
 # directory = 'sensitivity_xtc'
@@ -70,11 +68,11 @@ directory = 'it_2'
 it_path = os.path.join(parent_dir, directory)
 os.mkdir(it_path)
 sys = init_sys.systemmodifier(id, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
-                              duration_ns=time_constant+1,
-                              path=it_path)
+                              duration_ns=run_time, path=it_path)
 
-reward = sys.helix_reward_calc(sys.trj, dir=directory,time_constant=time_constant)
-next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward, normalize=True)
+reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time)
+next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward,
+                                                         normalize=True)
 
 infolist = []
 print(f"######## {id} ITERATION RESULT ########")
@@ -96,12 +94,11 @@ for i in infolist:
 print("                                        ")
 print("#############################################")
 print("First movement Completed !!!!!")
-file_name = it_path +"/info.txt"
+file_name = it_path + "/info.txt"
 with open(file_name, "w") as file:
     # Write each string in a new line
     for string in infolist:
         file.write(string + "\n")
-
 
 id = 3
 while id < 13:
@@ -112,7 +109,7 @@ while id < 13:
 
     random_number = random.random()
     print(f"Epsilon Random Number: {random_number}")
-    if random_number > 0.3: ### Walk based on RL decision
+    if random_number > 0.3:  ### Walk based on RL decision
         changes = qfunc.action2changes_convertor(next_action)
         print(f"RL Based Walk with: {changes}")
         print("")
@@ -128,13 +125,11 @@ while id < 13:
         print("")
 
     sys = sys.systemmodifier(id=id, atoms=top_sensitive_atoms, parameters="sigma",
-                                      change=changes,
-                                      duration_ns=time_constant+1,
-                                      path=it_path)
-    reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant)
+                             change=changes, duration_ns=run_time, path=it_path)
+    reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant,run_time=run_time)
     qfunc.current_location = tuple(x + y for x, y in zip(qfunc.current_location, next_action))
     next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward,
-                                                    normalize=True)
+                                                             normalize=True)
     infolist = []
     print(f"######## {id} ITERATION RESULT ########")
     print("                                        ")
