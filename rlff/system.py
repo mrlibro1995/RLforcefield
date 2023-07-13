@@ -148,7 +148,7 @@ class SystemObj:
 
     def reward_calculation(self, dir,time_constant):
         time_constant = time_constant * 100
-        time1 = time_constant + 1.5
+        time1 = time_constant * 1.2
         # Get thhe list of files in the directory
         file_names = [file for file in os.listdir(dir) if file == "helix.dat"]
         data_lists = []  # List to store the extracted data
