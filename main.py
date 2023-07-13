@@ -21,6 +21,7 @@ Gamma_qf = 0.8
 GaussianSigma_first = 10
 GaussianSigma = 2
 locations_list = []
+action_list = []
 
 #### Producing Trajectory for sensitivity calculation, Just for the fist time you add a new systemm
 # directory = 'sensitivity_xtc'
@@ -73,12 +74,12 @@ sys = init_sys.systemmodifier(id, atoms=top_sensitive_atoms, parameters="sigma",
 reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time)
 next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward,
                                                          normalize=True)
-
+action_list.append(qfunc.gradients2action_convertor(gradients))
 infolist = []
 print(f"######## {id} ITERATION RESULT ########")
 print("                                        ")
 infolist.append(f"Reward: {reward}")
-infolist.append(f"Next action: {next_action}")
+infolist.append(f"Next action suggested by RL: {next_action}")
 infolist.append(f"Current Q-value: {data[1]}")
 infolist.append(f"Next Q-value: {data[2]}")
 infolist.append(f"Diff: {data[3]}")
@@ -89,6 +90,8 @@ infolist.append(f"Location: {locations_list[-1]}")
 infolist.append("List of Locations: ")
 for loc in locations_list:
     infolist.append(str(loc))
+infolist.append("List of Actions:")
+infolist.append(action_list)
 for i in infolist:
     print(i)
 print("                                        ")
@@ -112,18 +115,20 @@ while id < 13:
     if random_number > 0.3:  ### Walk based on RL decision
         changes = qfunc.action2changes_convertor(next_action)
         print(f"RL Based Walk with: {changes}")
-        print("")
+
     elif random_number > 0.1 and random_number <= 0.3:  ### Walk based on Gradient Discent
         next_action = qfunc.gradients2action_convertor(gradients)
         changes = qfunc.action2changes_convertor(next_action)
         print(f"Gradients Based Walk with: {changes}")
-        print("")
+
     else:  ### Walk based on Randomness
         next_action = (random.randint(-local_radius, local_radius) for _ in range(n_atoms))
         changes = qfunc.action2changes_convertor(next_action)
         print(f"Random Based Walk with: {changes}")
-        print("")
+    print(f"Chosen Action: {next_action}")
+    print("")
 
+    action_list.append(next_action)
     sys = sys.systemmodifier(id=id, atoms=top_sensitive_atoms, parameters="sigma",
                              change=changes, duration_ns=run_time, path=it_path)
     reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant,run_time=run_time)
