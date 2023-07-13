@@ -99,7 +99,6 @@ print("#############################################")
 print("First movement Completed !!!!!")
 file_name = it_path + "/info.txt"
 with open(file_name, "w") as file:
-    # Write each string in a new line
     for string in infolist:
         file.write(string + "\n")
 
@@ -122,7 +121,7 @@ while id < 13:
         print(f"Gradients Based Walk with: {changes}")
 
     else:  ### Walk based on Randomness
-        next_action = (random.randint(-local_radius, local_radius) for _ in range(n_atoms))
+        next_action = tuple(random.randint(-local_radius, local_radius) for _ in range(n_atoms))
         changes = qfunc.action2changes_convertor(next_action)
         print(f"Random Based Walk with: {changes}")
     print(f"Chosen Action: {next_action}")
@@ -139,7 +138,7 @@ while id < 13:
     print(f"######## {id} ITERATION RESULT ########")
     print("                                        ")
     infolist.append(f"Reward: {reward}")
-    infolist.append(f"Next action: {next_action}")
+    infolist.append(f"Next action suggested by RL:: {next_action}")
     infolist.append(f"Current Q-value: {data[1]}")
     infolist.append(f"Next Q-value: {data[2]}")
     infolist.append(f"Diff: {data[3]}")
@@ -150,6 +149,8 @@ while id < 13:
     infolist.append("List of Locations: ")
     for loc in locations_list:
         infolist.append(str(loc))
+    infolist.append("List of Actions:")
+    infolist.append(str(action_list))
     for i in infolist:
         print(i)
     print("                                        ")
