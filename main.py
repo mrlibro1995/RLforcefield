@@ -11,7 +11,7 @@ local_radius = 2
 id = 2
 init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", id)
 qfunc = qf.Q_function(n_atoms, global_radius, local_radius,grid_step=0.03)
-Alpha_gr = 0.01
+Alpha_gr = 0.1
 time_constant = 3.0 #nano-second
 
 
@@ -43,24 +43,32 @@ helix_atoms = init_sys.sensitivity_calc("v2_traj.xtc", "v2_helix.dat",
                                         ['OW', 'HW', 'Cl', 'K'])
 top_sensitive_atoms, gradients = init_sys.sensitive_atoms(helix_atoms, n_atoms)
 gradients = [x * -Alpha_gr for x in gradients]
+
+infolist = []
+print("############# INITIAL VALUES ###############")
+print("")
+infolist.append(f"Number of Atoms (Dimensions of the Simulation): {n_atoms}")
+infolist.append(f"Global Radius (Changes range in every dimension): {global_radius}")
+infolist.append(f"Local Radius: {local_radius}")
+infolist.append(f"Gradients: {gradients}")
+infolist.append(f"Alpha for Gradients: {Alpha_gr}")
+infolist.append(f"Alpha for Q-Function: {Alpha_qf}")
+infolist.append(f"Gamma for Q-Function: {Gamma_qf}")
+infolist.append(f"Gassian Sigma for first Iteration: {GaussianSigma_first}")
+infolist.append(f"Gassian Sigma for next Iterations: {GaussianSigma}")
+for i in infolist:
+    print(i)
+print("")
+print("#############################################")
+file_name = "info.txt"
+with open(file_name, "w") as file:
+    # Write each string in a new line
+    for string in infolist:
+        file.write(string + "\n")
+
 directory = 'it_2'
 it_path = os.path.join(parent_dir, directory)
 os.mkdir(it_path)
-
-print("############# INITIAL VALUES ###############")
-print("")
-print(f"Number of Atoms (Dimensions of the Simulation): {n_atoms}")
-print(f"Global Radius (Changes range in every dimension): {global_radius}")
-print(f"Local Radius: {local_radius}")
-print(f"Gradients: {gradients}")
-print(f"Alpha for Gradients: {Alpha_gr}")
-print(f"Alpha for Q-Function: {Alpha_qf}")
-print(f"Gamma for Q-Function: {Gamma_qf}")
-print(f"Gassian Sigma for first Iteration: {GaussianSigma_first}")
-print(f"Gassian Sigma for next Iterations: {GaussianSigma}")
-print("")
-print("#############################################")
-
 sys = init_sys.systemmodifier(id, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
                               duration_ns=time_constant,
                               path=it_path)
@@ -68,22 +76,32 @@ sys = init_sys.systemmodifier(id, atoms=top_sensitive_atoms, parameters="sigma",
 reward = sys.helix_reward_calc(sys.trj, dir=directory,time_constant=time_constant)
 next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward, normalize=True)
 
+infolist = []
 print(f"######## {id} ITERATION RESULT ########")
 print("                                        ")
-print(f"Reward: {reward}")
-print(f"Next action: {next_action}")
-print(f"Current Q-value: {data[1]}")
-print(f"Next Q-value: {data[2]}")
-print(f"Diff: {data[3]}")
-print(f"Delta: {data[4]}")
-print(f"Avg Updating Weights: {data[5]}")
-print(f"Avg Local Weights: {data[6]}")
-print(f"Location: {locations_list[-1]}")
-print("List of Locations: ")
+infolist.append(f"Reward: {reward}")
+infolist.append(f"Next action: {next_action}")
+infolist.append(f"Current Q-value: {data[1]}")
+infolist.append(f"Next Q-value: {data[2]}")
+infolist.append(f"Diff: {data[3]}")
+infolist.append(f"Delta: {data[4]}")
+infolist.append(f"Avg Updating Weights: {data[5]}")
+infolist.append(f"Avg Local Weights: {data[6]}")
+infolist.append(f"Location: {locations_list[-1]}")
+infolist.append("List of Locations: ")
 for loc in locations_list:
-    print(loc)
+    infolist.append(str(loc))
+for i in infolist:
+    print(i)
 print("                                        ")
+print("#############################################")
 print("First movement Completed !!!!!")
+file_name = it_path +"/info.txt"
+with open(file_name, "w") as file:
+    # Write each string in a new line
+    for string in infolist:
+        file.write(string + "\n")
+
 
 id = 3
 while id < 13:
@@ -120,19 +138,27 @@ while id < 13:
 
     print(f"######## {id} ITERATION RESULT ########")
     print("                                        ")
-    print(f"Reward: {reward}")
-    print(f"Next action: {next_action}")
-    print(f"Current Q-value: {data[1]}")
-    print(f"Next Q-value: {data[2]}")
-    print(f"Diff: {data[3]}")
-    print(f"Delta: {data[4]}")
-    print(f"Avg Updating Weights: {data[5]}")
-    print(f"Avg Local Weights: {data[6]}")
-    print(f"Location: {locations_list[-1]}")
-    print("List of Locations: ")
+    infolist.append(f"Reward: {reward}")
+    infolist.append(f"Next action: {next_action}")
+    infolist.append(f"Current Q-value: {data[1]}")
+    infolist.append(f"Next Q-value: {data[2]}")
+    infolist.append(f"Diff: {data[3]}")
+    infolist.append(f"Delta: {data[4]}")
+    infolist.append(f"Avg Updating Weights: {data[5]}")
+    infolist.append(f"Avg Local Weights: {data[6]}")
+    infolist.append(f"Location: {locations_list[-1]}")
+    infolist.append("List of Locations: ")
     for loc in locations_list:
-        print(loc)
+        infolist.append(str(loc))
+    for i in infolist:
+        print(i)
     print("                                        ")
-    print("Fist movement Completed !!!!!")
+    print("#############################################")
+
+    file_name = it_path + "/info.txt"
+    with open(file_name, "w") as file:
+        # Write each string in a new line
+        for string in infolist:
+            file.write(string + "\n")
 
     id = id + 1
