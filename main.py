@@ -12,7 +12,7 @@ id = 2
 init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", id)
 qfunc = qf.Q_function(n_atoms, global_radius, local_radius,grid_step=0.03)
 Alpha_gr = 0.1
-time_constant = 3.0 #nano-second
+time_constant = 1.0 #nano-second
 
 
 ### Q-function Initialization
@@ -70,7 +70,7 @@ directory = 'it_2'
 it_path = os.path.join(parent_dir, directory)
 os.mkdir(it_path)
 sys = init_sys.systemmodifier(id, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
-                              duration_ns=time_constant,
+                              duration_ns=time_constant+1,
                               path=it_path)
 
 reward = sys.helix_reward_calc(sys.trj, dir=directory,time_constant=time_constant)
@@ -129,7 +129,7 @@ while id < 13:
 
     sys = sys.systemmodifier(id=id, atoms=top_sensitive_atoms, parameters="sigma",
                                       change=changes,
-                                      duration_ns=time_constant,
+                                      duration_ns=time_constant+1,
                                       path=it_path)
     reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant)
     qfunc.current_location = tuple(x + y for x, y in zip(qfunc.current_location, next_action))

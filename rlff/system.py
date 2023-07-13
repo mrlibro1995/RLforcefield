@@ -16,7 +16,6 @@ class SystemObj:
         self.pdb = pdb
         self.id = id_sample
 
-
     def trajectory_producer(self, plumed_file='plumed_sens.dat', id=0, duration_ns: float = 1.0, path: str = "/"):
         # If the trajectory exists already then remove it
         trajectory_filename = path + "/" + f'output_traj{id}.xtc'
@@ -95,7 +94,7 @@ class SystemObj:
         command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + self.pdb
         os.system(command)
         os.chdir('..')
-        self.helicity = self.reward_calculation(dir,time_constant)
+        self.helicity = self.reward_calculation(dir, time_constant)
         return self.helicity
 
     def time_constant_cal(self):
@@ -140,9 +139,9 @@ class SystemObj:
         print(f"average of helicities: {average_list}")
         return None
 
-    def reward_calculation(self, dir,time_constant):
+    def reward_calculation(self, dir, time_constant):
         time_constant = time_constant * 100
-        time1 = time_constant * 1.2
+        time1 = time_constant + 100
         # Get thhe list of files in the directory
         file_names = [file for file in os.listdir(dir) if file == "helix.dat"]
         data_lists = []  # List to store the extracted data
@@ -196,8 +195,7 @@ class SystemObj:
         return hel_by_atom
 
     def systemmodifier(self, id: int, atoms: list, change: list, parameters: str,
-                                duration_ns: int = 1.0,
-                                path: str = "/"):
+                       duration_ns: int = 1.0, path: str = "/"):
         topo = gml.Top(self.topo, pdb=self.pdb)
         topo.check_pdb()
         atoms_changes = [[x, y] for x, y in zip(atoms, change)]
@@ -209,7 +207,6 @@ class SystemObj:
         newsys = SystemObj(path + "/" + str(id) + ".top", path + "/" + str(id) + ".pdb", id)
         newsys.trajectory_producer(id=newsys.id, duration_ns=duration_ns, path=path)
         return newsys
-
 
     def sensitive_atoms(self, hel_atoms, n_top):
         '''''''''''''''''''''''''''''''''''''''''''''''
@@ -224,4 +221,3 @@ class SystemObj:
         changes = changes / np.linalg.norm(changes)
 
         return atoms, changes
-
