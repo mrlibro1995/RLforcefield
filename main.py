@@ -91,7 +91,7 @@ infolist.append("List of Locations: ")
 for loc in locations_list:
     infolist.append(str(loc))
 infolist.append("List of Actions:")
-infolist.append(action_list)
+infolist.append(str(action_list))
 for i in infolist:
     print(i)
 print("                                        ")
