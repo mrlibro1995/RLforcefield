@@ -92,16 +92,10 @@ class SystemObj:
         command = "cp plumed.dat protein.pdb " + dir + "/"
         os.system(command)
         os.chdir(dir)
-        print("Current working directory: {0}".format(os.getcwd()))
         command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + self.pdb
         os.system(command)
-        print("Helicity is calculated by: " + command)
-        # self.reward_calculation()
         os.chdir('..')
-        print("Finalized working directory: {0}".format(os.getcwd()))
-
         self.helicity = self.reward_calculation(dir,time_constant)
-
         return self.helicity
 
     def time_constant_cal(self):
@@ -152,11 +146,9 @@ class SystemObj:
         # Get thhe list of files in the directory
         file_names = [file for file in os.listdir(dir) if file == "helix.dat"]
         data_lists = []  # List to store the extracted data
-        print(f"file names: {file_names}")
         for file_path in file_names:
             file_path = os.path.join(dir, file_path)
             data_list = []  # List to store the second column data from each file
-            print(f"file path: {file_path}")
             with open(file_path, 'r') as file:
                 lines = file.readlines()
 
@@ -169,10 +161,6 @@ class SystemObj:
                         data_list.append(float(columns[1]))  # Extract the second column and convert to float
 
             data_lists.append(data_list)  # Add the data list to the main list
-
-            # Print the extracted data lists
-        for i, data_list in enumerate(data_lists):
-            print("Data list", i + 1, ":", data_list)
 
         h1_index = data_list[int(time1 - (time1 / 5)):int(time1)]
         h1 = sum(h1_index) / len(h1_index)
