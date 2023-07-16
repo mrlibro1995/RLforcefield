@@ -124,7 +124,9 @@ class Q_function:
             mins, maxs = self._check_borders(self.current_location)
 
         ranges = [(x, y + 1) for x, y in zip(mins, maxs)]
+        print(ranges)
         combinations = list(itertools.product(*[range(r[0], r[1]) for r in ranges]))
+        print(combinations)
         for idx, combination in enumerate(combinations):
             global_qvalues_copy[combination] = self.q_value_calculation(combination, normalize)
 
