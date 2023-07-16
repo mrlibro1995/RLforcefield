@@ -94,7 +94,7 @@ class SystemObj:
         command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + self.pdb
         os.system(command)
         os.chdir('..')
-        self.helicity = self.reward_calculation(dir, time_constant,run_time)
+        self.helicity = self.reward_calculation(dir, time_constant, run_time)
         return self.helicity
 
     def time_constant_cal(self):
@@ -222,15 +222,18 @@ class SystemObj:
 
         return atoms, changes
 
-    def sum_and_replace_negatives(self, tuple1, tuple2):
-        # Check if both tuuples have the same number of elements
-        if len(tuple1) != len(tuple2):
+    def adjust_tuple_to_avoid_negatives(self, next_action, location):
+        # Check if both tuples have the same number of elements
+        if len(next_action) != len(location):
             raise ValueError("Tuples must have the same number of elements")
 
-        # Suum the tuples element-wise
-        result_tuple = tuple(x + y for x, y in zip(tuple1, tuple2))
+        # Sum the tuples element-wise
+        sum_tuple = tuple(x + y for x, y in zip(next_action, location))
 
-        # Replace negative elements with 0
-        result_tuple = tuple(0 if x < 0 else x for x in result_tuple)
+        for indx, element in enumerate(sum_tuple):
+            if element < 0:
+                temp_list = list(next_action)
+                temp_list[indx] = abs(element) + temp_list[indx]
+                next_action = tuple(temp_list)
 
-        return result_tuple
+        return next_action

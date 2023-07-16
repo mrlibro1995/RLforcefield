@@ -8,7 +8,7 @@ class Q_function:
         self.global_dimensions = global_dimensions
         self.global_radius = global_radius
         self.local_radius = local_radius
-        self.current_location = (0,) * self.global_dimensions
+        self.current_location = (self.global_radius,) * self.global_dimensions
         self.global_weights = self._nd_gaussian(10, global_radius, global_dimensions, False)
         self.global_qvalues = np.zeros(shape=(global_radius * 2 + 1,) * global_dimensions)
         self.global_qvalues[self.current_location] = 20
@@ -104,7 +104,6 @@ class Q_function:
         ranges = [(x, y) for x, y in zip(mins, maxs)]
         slices_list = [slice(min, max + 1) for min, max in ranges]
         local_weights = self.global_weights[tuple(slices_list)]
-
         local_weights_copy = np.copy(local_weights)
         loc_tuple = tuple(self.local_radius for _ in range(self.global_dimensions))
         gaus_weights = self._operation_matrices_with_location(local_weights_copy, gaus, loc_tuple, 'mul')
@@ -117,16 +116,15 @@ class Q_function:
 
         if id == 2:
             mins, maxs = self._check_borders(self.current_location)
-            factor = self.global_qvalues[self.current_location] / self.q_value_calculation(self.current_location,
-                                                                                           normalize)
+            denominator = self.q_value_calculation(self.current_location, normalize)
+            numerator = self.global_qvalues[self.current_location]
+            factor =  numerator/ denominator
             self.global_weights = self.global_weights * factor
         else:
             mins, maxs = self._check_borders(self.current_location)
 
         ranges = [(x, y + 1) for x, y in zip(mins, maxs)]
-        print(ranges)
         combinations = list(itertools.product(*[range(r[0], r[1]) for r in ranges]))
-        print(combinations)
         for idx, combination in enumerate(combinations):
             global_qvalues_copy[combination] = self.q_value_calculation(combination, normalize)
 
@@ -159,8 +157,8 @@ class Q_function:
         data.append(round(next_qval, 2))
         data.append(round(diff, 2))
         data.append(round(Delta, 2))
-        data.append(round(self._recursive_average(weights_update),4))
-        data.append(round(self._recursive_average(weights_local),4))
+        data.append(round(self._recursive_average(weights_update), 4))
+        data.append(round(self._recursive_average(weights_local), 4))
 
         self.locations_list.append(self.current_location)
         return next_action, data, self.locations_list
