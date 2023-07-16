@@ -221,3 +221,16 @@ class SystemObj:
         changes = changes / np.linalg.norm(changes)
 
         return atoms, changes
+
+    def sum_and_replace_negatives(tuple1, tuple2):
+        # Check if both tuples have the same number of elements
+        if len(tuple1) != len(tuple2):
+            raise ValueError("Tuples must have the same number of elements")
+
+        # Sum the tuples element-wise
+        result_tuple = tuple(x + y for x, y in zip(tuple1, tuple2))
+
+        # Replace negative elements with 0
+        result_tuple = tuple(0 if x < 0 else x for x in result_tuple)
+
+        return result_tuple

@@ -113,19 +113,19 @@ while id < 13:
     random_number = random.random()
     print(f"Epsilon Random Number: {random_number}")
     if random_number > 0.3:  ### Walk based on RL decision
-        next_action = (0, 0, 0, 0)
+        next_action = sys.sum_and_replace_negatives(next_action, qfunc.current_location)
         changes = qfunc.action2changes_convertor(next_action)
         print(f"RL Based Walk with: {changes}")
 
     elif random_number > 0.1 and random_number <= 0.3:  ### Walk based on Gradient Discent
         next_action = qfunc.gradients2action_convertor(gradients)
-        next_action = (0, 0, 0, 0)
+        next_action = sys.sum_and_replace_negatives(next_action, qfunc.current_location)
         changes = qfunc.action2changes_convertor(next_action)
         print(f"Gradients Based Walk with: {changes}")
 
     else:  ### Walk based on Randomness
         next_action = tuple(random.randint(-local_radius, local_radius) for _ in range(n_atoms))
-        next_action = (0, 0, 0, 0)
+        next_action = sys.sum_and_replace_negatives(next_action, qfunc.current_location)
         changes = qfunc.action2changes_convertor(next_action)
         print(f"Random Based Walk with: {changes}")
     print(f"Chosen Action: {next_action}")
@@ -134,7 +134,7 @@ while id < 13:
     action_list.append(next_action)
     sys = sys.systemmodifier(id=id, atoms=top_sensitive_atoms, parameters="sigma",
                              change=changes, duration_ns=run_time, path=it_path)
-    reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant,run_time=run_time)
+    reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time)
     qfunc.current_location = tuple(x + y for x, y in zip(qfunc.current_location, next_action))
     next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward,
                                                              normalize=True)
