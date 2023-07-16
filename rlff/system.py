@@ -227,7 +227,7 @@ class SystemObj:
         if len(tuple1) != len(tuple2):
             raise ValueError("Tuples must have the same number of elements")
 
-        # Sum the tuples element-wise
+        # Suum the tuples element-wise
         result_tuple = tuple(x + y for x, y in zip(tuple1, tuple2))
 
         # Replace negative elements with 0
