@@ -8,7 +8,7 @@ class Q_function:
         self.global_dimensions = global_dimensions
         self.global_radius = global_radius
         self.local_radius = local_radius
-        self.current_location = (0.0,) * self.global_dimensions
+        self.current_location = (0,) * self.global_dimensions
         self.global_weights = self._nd_gaussian(10, global_radius, global_dimensions, False)
         self.global_qvalues = np.zeros(shape=(global_radius * 2 + 1,) * global_dimensions)
         self.global_qvalues[self.current_location] = 20
