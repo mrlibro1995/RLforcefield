@@ -12,8 +12,8 @@ id = 2
 init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", id)
 qfunc = qf.Q_function(n_atoms, global_radius, local_radius, grid_step=0.03)
 Alpha_gr = 0.1
-time_constant = 0.25  # nano-second
-run_time = time_constant + 0.25
+time_constant = 0.01  # nano-second
+run_time = time_constant
 
 ### Q-function Initialization
 Alpha_qf = 500
@@ -71,7 +71,8 @@ os.mkdir(it_path)
 sys = init_sys.systemmodifier(id, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
                               duration_ns=run_time, path=it_path)
 
-reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time)
+reward = 2.0
+# reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time)
 next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward,
                                                          normalize=True)
 action_list.append(qfunc.gradients2action_convertor(gradients))
@@ -112,16 +113,19 @@ while id < 13:
     random_number = random.random()
     print(f"Epsilon Random Number: {random_number}")
     if random_number > 0.3:  ### Walk based on RL decision
+        next_action = (-1,-1,-1,-1)
         changes = qfunc.action2changes_convertor(next_action)
         print(f"RL Based Walk with: {changes}")
 
     elif random_number > 0.1 and random_number <= 0.3:  ### Walk based on Gradient Discent
         next_action = qfunc.gradients2action_convertor(gradients)
+        next_action = (-1, -1, -1, -1)
         changes = qfunc.action2changes_convertor(next_action)
         print(f"Gradients Based Walk with: {changes}")
 
     else:  ### Walk based on Randomness
         next_action = tuple(random.randint(-local_radius, local_radius) for _ in range(n_atoms))
+        next_action = (-1, -1, -1, -1)
         changes = qfunc.action2changes_convertor(next_action)
         print(f"Random Based Walk with: {changes}")
     print(f"Chosen Action: {next_action}")
