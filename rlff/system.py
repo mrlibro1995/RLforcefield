@@ -223,7 +223,7 @@ class SystemObj:
         return atoms, changes
 
     def sum_and_replace_negatives(self, tuple1, tuple2):
-        # Check if both tuples have the same number of elements
+        # Check if both tuuples have the same number of elements
         if len(tuple1) != len(tuple2):
             raise ValueError("Tuples must have the same number of elements")
 
