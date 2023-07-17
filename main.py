@@ -10,14 +10,14 @@ global_radius = 5
 local_radius = 2
 id = 2
 init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", id)
-qfunc = qf.Q_function(n_atoms, global_radius, local_radius, grid_step=0.03)
-Alpha_gr = 0.1
-time_constant = 0.001  # nano-second
-run_time = time_constant
+qfunc = qf.Q_function(n_atoms, global_radius, local_radius, grid_step=0.01, initial_qval=10)
+Alpha_gr = 0.05
+time_constant = 3.0  # nano-second
+run_time = time_constant + 1.0
 
 ### Q-function Initialization
-Alpha_qf = 500
-Gamma_qf = 0.8
+Alpha_qf = 300
+Gamma_qf = 0.3
 GaussianSigma_first = 10
 GaussianSigma = 2
 locations_list = []
@@ -138,8 +138,7 @@ while id < 13:
 
     sys = sys.systemmodifier(id=id, atoms=top_sensitive_atoms, parameters="sigma",
                              change=changes, duration_ns=run_time, path=it_path)
-    reward = 2.0
-    # reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time)
+    reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time)
     qfunc.current_location = tuple(x + y for x, y in zip(qfunc.current_location, next_action))
     next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward,
                                                              normalize=True)

@@ -4,14 +4,14 @@ import itertools
 
 
 class Q_function:
-    def __init__(self, global_dimensions, global_radius, local_radius, grid_step):
+    def __init__(self, global_dimensions, global_radius, local_radius, grid_step, initial_qval):
         self.global_dimensions = global_dimensions
         self.global_radius = global_radius
         self.local_radius = local_radius
         self.current_location = (self.global_radius,) * self.global_dimensions
         self.global_weights = self._nd_gaussian(10, global_radius, global_dimensions, False)
         self.global_qvalues = np.zeros(shape=(global_radius * 2 + 1,) * global_dimensions)
-        self.global_qvalues[self.current_location] = 20
+        self.global_qvalues[self.current_location] = initial_qval
         self.grid_step = grid_step
 
         self.weights_series = []
