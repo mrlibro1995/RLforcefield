@@ -22,6 +22,9 @@ GaussianSigma_first = 10
 GaussianSigma = 2
 locations_list = []
 action_list = []
+reward_list = []
+delta_list = []
+nextQvalue_list = []
 
 #### Producing Trajectory for sensitivity calculation, Just for the fist time you add a new systemm
 # directory = 'sensitivity_xtc'
@@ -71,10 +74,12 @@ os.mkdir(it_path)
 sys = init_sys.systemmodifier(id, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
                               duration_ns=run_time, path=it_path)
 
-reward = 2.0
-# reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time)
+reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time)
 next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward,
                                                          normalize=True)
+delta_list.append(data[4])
+nextQvalue_list.append(data[2])
+reward_list.append(reward)
 action_list.append(qfunc.gradients2action_convertor(gradients))
 infolist = []
 print(f"######## {id} ITERATION RESULT ########")
@@ -89,10 +94,10 @@ infolist.append(f"Avg Updating Weights: {data[5]}")
 infolist.append(f"Avg Local Weights: {data[6]}")
 infolist.append(f"Location: {locations_list[-1]}")
 infolist.append("List of Locations: ")
-for loc in locations_list:
-    infolist.append(str(loc))
-infolist.append("List of Actions:")
-infolist.append(str(action_list))
+for idx, loc in enumerate(locations_list):
+    infolist.append(
+        f"loc: {str(loc)} - act: {action_list[idx]} - reward: {reward_list[idx]} - Delta: {delta_list[idx]} - next-qval: {nextQvalue_list[idx]}")
+
 for i in infolist:
     print(i)
 print("                                        ")
@@ -131,13 +136,18 @@ while id < 13:
     print(f"Chosen Action: {next_action}")
     print("")
 
-    action_list.append(next_action)
     sys = sys.systemmodifier(id=id, atoms=top_sensitive_atoms, parameters="sigma",
                              change=changes, duration_ns=run_time, path=it_path)
     reward = 2.0
-    # reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time)    qfunc.current_location = tuple(x + y for x, y in zip(qfunc.current_location, next_action))
+    # reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time)
+    qfunc.current_location = tuple(x + y for x, y in zip(qfunc.current_location, next_action))
     next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward,
                                                              normalize=True)
+    delta_list.append(data[4])
+    nextQvalue_list.append(data[2])
+    reward_list.append(reward)
+    action_list.append(next_action)
+
     infolist = []
     print(f"######## {id} ITERATION RESULT ########")
     print("                                        ")
@@ -151,10 +161,10 @@ while id < 13:
     infolist.append(f"Avg Local Weights: {data[6]}")
     infolist.append(f"Location: {locations_list[-1]}")
     infolist.append("List of Locations: ")
-    for loc in locations_list:
-        infolist.append(str(loc))
-    infolist.append("List of Actions:")
-    infolist.append(str(action_list))
+    for idx, loc in enumerate(locations_list):
+        infolist.append(
+            f"loc: {str(loc)} - act: {action_list[idx]} - reward: {reward_list[idx]} - Delta: {delta_list[idx]} - next-qval: {nextQvalue_list[idx]}")
+
     for i in infolist:
         print(i)
     print("                                        ")
