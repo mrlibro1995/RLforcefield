@@ -9,8 +9,10 @@ n_atoms = 4
 global_radius = 5
 local_radius = 2
 id = 2
+grid_step = 0.005
+initial_qval = 4
 init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", id)
-qfunc = qf.Q_function(n_atoms, global_radius, local_radius, grid_step=0.01, initial_qval=10)
+qfunc = qf.Q_function(n_atoms, global_radius, local_radius, grid_step=grid_step, initial_qval=initial_qval)
 Alpha_gr = 0.05
 time_constant = 3.0  # nano-second
 run_time = time_constant + 1.0
@@ -27,6 +29,8 @@ delta_list = []
 nextQvalue_list = []
 cur_qval_list = []
 diff_list = []
+u_weight_list = []
+l_weight_list = []
 
 #### Producing Trajectory for sensitivity calculation, Just for the fist time you add a new systemm
 # directory = 'sensitivity_xtc'
@@ -79,6 +83,8 @@ sys = init_sys.systemmodifier(id, atoms=top_sensitive_atoms, parameters="sigma",
 reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time)
 next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward,
                                                          normalize=True)
+l_weight_list.append(data[6])
+u_weight_list.append(data[5])
 delta_list.append(data[4])
 diff_list.append(data[3])
 nextQvalue_list.append(data[2])
@@ -88,19 +94,10 @@ action_list.append(qfunc.gradients2action_convertor(gradients))
 infolist = []
 print(f"######## {id} ITERATION RESULT ########")
 print("                                        ")
-infolist.append(f"Reward: {reward}")
 infolist.append(f"Next action suggested by RL: {next_action}")
-infolist.append(f"Current Q-value: {data[1]}")
-infolist.append(f"Next Q-value: {data[2]}")
-infolist.append(f"Diff: {data[3]}")
-infolist.append(f"Delta: {data[4]}")
-infolist.append(f"Avg Updating Weights: {data[5]}")
-infolist.append(f"Avg Local Weights: {data[6]}")
-infolist.append(f"Location: {locations_list[-1]}")
-infolist.append("List of Locations: ")
 for idx, loc in enumerate(locations_list):
     infolist.append(
-        f"loc: {str(loc)} - act: {action_list[idx]} - rew: {round(reward_list[idx], 2)} - Delta: {delta_list[idx]} - Diff: {diff_list[idx]} - n-qval: {nextQvalue_list[idx]} - o-qval: {cur_qval_list[idx]}")
+        f"loc: {str(loc)} - rew: {round(reward_list[idx], 2)} - Delta: {delta_list[idx]} - Diff: {diff_list[idx]} - n-qval: {nextQvalue_list[idx]} - o-qval: {cur_qval_list[idx]} - uW: {u_weight_list[idx]} - lW: {l_weight_list[idx]} - act: {action_list[idx]}")
 
 for i in infolist:
     print(i)
@@ -146,6 +143,8 @@ while id < 13:
     qfunc.current_location = tuple(x + y for x, y in zip(qfunc.current_location, next_action))
     next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward,
                                                              normalize=True)
+    l_weight_list.append(data[6])
+    u_weight_list.append(data[5])
     delta_list.append(data[4])
     diff_list.append(data[3])
     nextQvalue_list.append(data[2])
@@ -156,19 +155,11 @@ while id < 13:
     infolist = []
     print(f"######## {id} ITERATION RESULT ########")
     print("                                        ")
-    infolist.append(f"Reward: {reward}")
     infolist.append(f"Next action suggested by RL:: {next_action}")
-    infolist.append(f"Current Q-value: {data[1]}")
-    infolist.append(f"Next Q-value: {data[2]}")
-    infolist.append(f"Diff: {data[3]}")
-    infolist.append(f"Delta: {data[4]}")
-    infolist.append(f"Avg Updating Weights: {data[5]}")
-    infolist.append(f"Avg Local Weights: {data[6]}")
-    infolist.append(f"Location: {locations_list[-1]}")
-    infolist.append("List of Locations: ")
+
     for idx, loc in enumerate(locations_list):
         infolist.append(
-            f"loc: {str(loc)} - act: {action_list[idx]} - rew: {round(reward_list[idx], 2)} - Delta: {delta_list[idx]} - Diff: {diff_list[idx]} - n-qval: {nextQvalue_list[idx]} - o-qval: {cur_qval_list[idx]}")
+             f"loc: {str(loc)} - rew: {round(reward_list[idx], 2)} - Delta: {delta_list[idx]} - Diff: {diff_list[idx]} - n-qval: {nextQvalue_list[idx]} - o-qval: {cur_qval_list[idx]} - uW: {u_weight_list[idx]} - lW: {l_weight_list[idx]} - act: {action_list[idx]}")
 
     for i in infolist:
         print(i)
