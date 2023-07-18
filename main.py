@@ -17,7 +17,7 @@ run_time = time_constant + 1.0
 
 ### Q-function Initialization
 Alpha_qf = 300
-Gamma_qf = 0.3
+Gamma_qf = 0.2
 GaussianSigma_first = 10
 GaussianSigma = 2
 locations_list = []
@@ -25,6 +25,8 @@ action_list = []
 reward_list = []
 delta_list = []
 nextQvalue_list = []
+cur_qval_list = []
+diff_list = []
 
 #### Producing Trajectory for sensitivity calculation, Just for the fist time you add a new systemm
 # directory = 'sensitivity_xtc'
@@ -78,7 +80,9 @@ reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_consta
 next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward,
                                                          normalize=True)
 delta_list.append(data[4])
+diff_list.append(data[3])
 nextQvalue_list.append(data[2])
+cur_qval_list.append(data[1])
 reward_list.append(reward)
 action_list.append(qfunc.gradients2action_convertor(gradients))
 infolist = []
@@ -96,7 +100,7 @@ infolist.append(f"Location: {locations_list[-1]}")
 infolist.append("List of Locations: ")
 for idx, loc in enumerate(locations_list):
     infolist.append(
-        f"loc: {str(loc)} - act: {action_list[idx]} - reward: {reward_list[idx]} - Delta: {delta_list[idx]} - next-qval: {nextQvalue_list[idx]}")
+        f"loc: {str(loc)} - act: {action_list[idx]} - rew: {round(reward_list[idx], 2)} - Delta: {delta_list[idx]} - Diff: {diff_list[idx]} - n-qval: {nextQvalue_list[idx]} - o-qval: {cur_qval_list[idx]}")
 
 for i in infolist:
     print(i)
@@ -143,9 +147,11 @@ while id < 13:
     next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward,
                                                              normalize=True)
     delta_list.append(data[4])
+    diff_list.append(data[3])
     nextQvalue_list.append(data[2])
+    cur_qval_list.append(data[1])
     reward_list.append(reward)
-    action_list.append(next_action)
+    action_list.append(qfunc.gradients2action_convertor(gradients))
 
     infolist = []
     print(f"######## {id} ITERATION RESULT ########")
@@ -162,7 +168,7 @@ while id < 13:
     infolist.append("List of Locations: ")
     for idx, loc in enumerate(locations_list):
         infolist.append(
-            f"loc: {str(loc)} - act: {action_list[idx]} - reward: {reward_list[idx]} - Delta: {delta_list[idx]} - next-qval: {nextQvalue_list[idx]}")
+            f"loc: {str(loc)} - act: {action_list[idx]} - rew: {round(reward_list[idx], 2)} - Delta: {delta_list[idx]} - Diff: {diff_list[idx]} - n-qval: {nextQvalue_list[idx]} - o-qval: {cur_qval_list[idx]}")
 
     for i in infolist:
         print(i)
