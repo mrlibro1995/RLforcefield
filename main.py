@@ -10,15 +10,15 @@ global_radius = 5
 local_radius = 2
 id = 2
 grid_step = 0.005
-initial_qval = 4
+initial_qval = 2
 init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", id)
 qfunc = qf.Q_function(n_atoms, global_radius, local_radius, grid_step=grid_step, initial_qval=initial_qval)
 Alpha_gr = 0.05
-time_constant = 3.0  # nano-second
-run_time = time_constant + 1.0
+time_constant = 0.01  # nano-second
+run_time = time_constant
 
 ### Q-function Initialization
-Alpha_qf = 300
+Alpha_qf = 400
 Gamma_qf = 0.2
 GaussianSigma_first = 10
 GaussianSigma = 2
@@ -90,14 +90,13 @@ diff_list.append(data[3])
 nextQvalue_list.append(data[2])
 cur_qval_list.append(data[1])
 reward_list.append(reward)
-action_list.append(qfunc.gradients2action_convertor(gradients))
 infolist = []
 print(f"######## {id} ITERATION RESULT ########")
 print("                                        ")
 infolist.append(f"Next action suggested by RL: {next_action}")
 for idx, loc in enumerate(locations_list):
     infolist.append(
-        f"loc: {str(loc)} - rew: {round(reward_list[idx], 2)} - Delta: {delta_list[idx]} - Diff: {diff_list[idx]} - n-qval: {nextQvalue_list[idx]} - o-qval: {cur_qval_list[idx]} - uW: {u_weight_list[idx]} - lW: {l_weight_list[idx]} - act: {action_list[idx]}")
+        f"loc: {str(loc)} - rew: {round(reward_list[idx], 2)} - Delta: {delta_list[idx]} - Diff: {diff_list[idx]} - n-qval: {nextQvalue_list[idx]} - o-qval: {cur_qval_list[idx]} - uW: {u_weight_list[idx]} - lW: {l_weight_list[idx]}")
 
 for i in infolist:
     print(i)
@@ -110,7 +109,7 @@ with open(file_name, "w") as file:
         file.write(string + "\n")
 
 id = 3
-while id < 13:
+while id < 200:
 
     directory = f'it_{id}'
     it_path = os.path.join(parent_dir, directory)
@@ -150,7 +149,6 @@ while id < 13:
     nextQvalue_list.append(data[2])
     cur_qval_list.append(data[1])
     reward_list.append(reward)
-    action_list.append(qfunc.gradients2action_convertor(gradients))
 
     infolist = []
     print(f"######## {id} ITERATION RESULT ########")
@@ -159,7 +157,7 @@ while id < 13:
 
     for idx, loc in enumerate(locations_list):
         infolist.append(
-             f"loc: {str(loc)} - rew: {round(reward_list[idx], 2)} - Delta: {delta_list[idx]} - Diff: {diff_list[idx]} - n-qval: {nextQvalue_list[idx]} - o-qval: {cur_qval_list[idx]} - uW: {u_weight_list[idx]} - lW: {l_weight_list[idx]} - act: {action_list[idx]}")
+             f"loc: {str(loc)} - rew: {round(reward_list[idx], 2)} - Delta: {delta_list[idx]} - Diff: {diff_list[idx]} - n-qval: {nextQvalue_list[idx]} - o-qval: {cur_qval_list[idx]} - uW: {u_weight_list[idx]} - lW: {l_weight_list[idx]}")
 
     for i in infolist:
         print(i)
