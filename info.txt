@@ -1,0 +1,9 @@
+Number of Atoms (Dimensions of the Simulation): 4
+Global Radius (Changes range in every dimension): 5
+Local Radius: 2
+Gradients: [0.01604135444407862, 0.016568826690136897, -0.022726348669790737, -0.038100682485366945]
+Alpha for Gradients: 0.05
+Alpha for Q-Function: 400
+Gamma for Q-Function: 0.2
+Gassian Sigma for first Iteration: 10
+Gassian Sigma for next Iterations: 2

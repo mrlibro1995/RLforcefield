@@ -1,0 +1,49 @@
+Reward: 3.485616299151083
+Next action suggested by RL:: (-1, 0, 0, 0)
+Current Q-value: 3.18
+Next Q-value: 7.1
+Diff: -2.11
+Delta: 1.37
+Avg Updating Weights: 0.6595
+Avg Local Weights: 8.3034
+Location: (4, 3, 0, 0)
+List of Locations: 
+loc: (5, 5, 5, 5) - act: [1, 1, -2, -3] - reward: 1.0642714260051387 - Delta: -7.45 - next-qval: 9.89
+loc: (5, 5, 5, 4) - act: (-1, 1, -1, -2) - reward: 2.463642746602463 - Delta: -6.26 - next-qval: 7.79
+loc: (4, 6, 4, 2) - act: (-1, 2, -1, 2) - reward: 1.727330601699236 - Delta: -4.99 - next-qval: 7.17
+loc: (3, 8, 3, 4) - act: (-1, 0, 2, 2) - reward: 2.486525900994053 - Delta: -3.6 - next-qval: 7.22
+loc: (2, 8, 5, 6) - act: (2, -2, 2, 2) - reward: 1.3275355839233702 - Delta: -4.76 - next-qval: 7.53
+loc: (4, 6, 7, 8) - act: (2, -2, 0, 0) - reward: 1.8441618965895006 - Delta: -4.56 - next-qval: 7.54
+loc: (6, 4, 7, 8) - act: (2, -1, -2, -1) - reward: 1.8036560853759283 - Delta: -4.63 - next-qval: 7.37
+loc: (8, 3, 5, 7) - act: (0, 2, -2, 0) - reward: 1.488642702936981 - Delta: -4.79 - next-qval: 7.25
+loc: (9, 4, 3, 4) - act: (-1, 2, -1, 1) - reward: 1.356652459385196 - Delta: 2.41 - next-qval: 7.03
+loc: (8, 6, 2, 5) - act: (0, -2, 0, -1) - reward: 1.538279542301069 - Delta: -4.32 - next-qval: 7.84
+loc: (8, 4, 2, 4) - act: (0, -1, 1, -1) - reward: 0.44993565869795504 - Delta: -6.31 - next-qval: 7.2
+loc: (8, 3, 3, 3) - act: (-1, -1, 2, -1) - reward: 0.9732376767934461 - Delta: -5.24 - next-qval: 6.62
+loc: (9, 4, 1, 0) - act: (-1, 2, 1, 0) - reward: 0.6208185234751655 - Delta: 1.28 - next-qval: 4.38
+loc: (8, 6, 2, 0) - act: (0, 2, 2, 0) - reward: 0.8059969953282673 - Delta: -1.48 - next-qval: 6.08
+loc: (8, 8, 4, 0) - act: (0, -1, 2, 0) - reward: 0.6201331850568732 - Delta: -2.23 - next-qval: 6.5
+loc: (6, 10, 2, 1) - act: (2, -2, 2, 1) - reward: 0.9619981397126323 - Delta: -1.05 - next-qval: 5.64
+loc: (8, 8, 4, 2) - act: (0, 0, 2, 2) - reward: 0.9100442118359326 - Delta: -3.21 - next-qval: 6.81
+loc: (9, 9, 2, 0) - act: (-2, -1, 0, 0) - reward: 0.7524361634096187 - Delta: -0.27 - next-qval: 3.53
+loc: (7, 8, 2, 0) - act: (-2, 0, 0, 0) - reward: 0.7116486290537092 - Delta: -0.7 - next-qval: 4.05
+loc: (9, 8, 2, 0) - act: (-2, 0, 0, 0) - reward: 0.9547005997214326 - Delta: 0.13 - next-qval: 3.24
+loc: (7, 6, 1, 0) - act: (-2, -2, 0, 0) - reward: 1.1251788685972404 - Delta: -0.14 - next-qval: 4.45
+loc: (8, 7, 0, 0) - act: (-2, 1, 0, 0) - reward: 1.469396158333708 - Delta: 0.71 - next-qval: 3.59
+loc: (6, 8, 0, 0) - act: (-2, -2, 0, 0) - reward: 1.5152413476044617 - Delta: 0.66 - next-qval: 4.12
+loc: (7, 9, 0, 0) - act: (-2, -1, 0, 0) - reward: 1.3554534278965533 - Delta: 0.9 - next-qval: 4.06
+loc: (5, 8, 0, 0) - act: (-2, -2, 0, 0) - reward: 1.0810094094141853 - Delta: -0.02 - next-qval: 4.73
+loc: (3, 6, 0, 0) - act: (-1, -2, 0, 0) - reward: 2.718959886136992 - Delta: 1.45 - next-qval: 5.9
+loc: (2, 4, 0, 0) - act: (1, -1, 0, 0) - reward: 2.0817952020224646 - Delta: 0.86 - next-qval: 6.35
+loc: (3, 3, 0, 0) - act: (0, -1, 0, 0) - reward: 2.5368987344414204 - Delta: 1.1 - next-qval: 6.36
+loc: (5, 2, 0, 0) - act: (-2, 1, 0, 0) - reward: 1.7134727608694718 - Delta: 0.57 - next-qval: 6.71
+loc: (3, 3, 0, 0) - act: (0, -1, 0, 0) - reward: 2.337276183744219 - Delta: 0.58 - next-qval: 6.62
+loc: (3, 2, 0, 0) - act: (0, 1, 0, 0) - reward: 2.135046646138884 - Delta: 0.63 - next-qval: 6.89
+loc: (3, 3, 0, 0) - act: (0, -1, 0, 0) - reward: 2.805288175016467 - Delta: 0.9 - next-qval: 6.85
+loc: (3, 2, 0, 0) - act: (0, 1, 0, 0) - reward: 3.076280622108845 - Delta: 1.38 - next-qval: 7.19
+loc: (5, 2, 0, 0) - act: (-2, 1, 0, 0) - reward: 2.3032973069851495 - Delta: 0.79 - next-qval: 7.43
+loc: (3, 3, 0, 0) - act: (0, -1, 0, 0) - reward: 2.500410652455825 - Delta: 0.14 - next-qval: 7.4
+loc: (3, 2, 0, 0) - act: (0, 1, 0, 0) - reward: 1.8313912094102904 - Delta: -0.35 - next-qval: 7.55
+loc: (3, 3, 0, 0) - act: (0, -1, 0, 0) - reward: 1.140144146967561 - Delta: -1.34 - next-qval: 7.35
+loc: (3, 2, 0, 0) - act: (0, 1, 0, 0) - reward: 1.5810197319638286 - Delta: -0.6 - next-qval: 7.21
+loc: (4, 3, 0, 0) - act: (-1, 0, 0, 0) - reward: 3.485616299151083 - Delta: 1.37 - next-qval: 7.1
