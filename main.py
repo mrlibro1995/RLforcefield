@@ -13,9 +13,9 @@ grid_step = 0.005
 initial_qval = 2
 init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", id)
 qfunc = qf.Q_function(n_atoms, global_radius, local_radius, grid_step=grid_step, initial_qval=initial_qval)
-Alpha_gr = 0.05
-time_constant = 0.01  # nano-second
-run_time = time_constant
+Alpha_gr = 0.03
+time_constant = 4.0  # nano-second
+run_time = time_constant + 0.5
 
 ### Q-function Initialization
 Alpha_qf = 400
@@ -52,7 +52,9 @@ helix_atoms = init_sys.sensitivity_calc("v2_traj.xtc", "v2_helix.dat",
                                         ['OW', 'HW', 'Cl', 'K'])
 top_sensitive_atoms, gradients = init_sys.sensitive_atoms(helix_atoms, n_atoms)
 gradients = [x * -Alpha_gr for x in gradients]
-
+print(f"gradients: {gradients}" )
+actions = qfunc.gradients2action_convertor(gradients)
+print(f"actions: {actions}")
 infolist = []
 print("############# INITIAL VALUES ###############")
 print("")
@@ -98,26 +100,29 @@ print("                                        ")
 infolist.append(f"Next action suggested by QF: {next_action}")
 for idx, loc in enumerate(locations_list):
     infolist.append(
-        f"loc: {str(loc)} - rew: {round(reward_list[idx], 2)} - Delta: {delta_list[idx]} - Diff: {diff_list[idx]} - n-qval: {nextQvalue_list[idx]} - o-qval: {cur_qval_list[idx]} - uW: {u_weight_list[idx]} - lW: {l_weight_list[idx]} - Act: {action_list[idx]})
+        f"loc: {str(loc)} - rew: {round(reward_list[idx], 2)} - Delta: {delta_list[idx]} - Diff: {diff_list[idx]} - n-qval: {nextQvalue_list[idx]} - o-qval: {cur_qval_list[idx]} - uW: {u_weight_list[idx]} - lW: {l_weight_list[idx]} - Act: {action_list[idx]}")
 
 for i in infolist:
     print(i)
 print("                                        ")
 print("#############################################")
 print("First movement Completed !!!!!")
+
+
 file_name = it_path + "/info.txt"
 with open(file_name, "w") as file:
     for string in infolist:
         file.write(string + "\n")
 
 id = 3
+
 while id < 200:
 
     directory = f'it_{id}'
     it_path = os.path.join(parent_dir, directory)
     os.mkdir(it_path)
 
-    random_number = random.random()
+    random_number = 0.2 #random.random()
     print(f"Epsilon Random Number: {random_number}")
     if random_number > 0.3:  ### Walk based on RL decision
         next_action = sys.adjust_tuple_to_avoid_negatives(next_action, qfunc.current_location)
