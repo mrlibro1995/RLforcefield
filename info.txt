@@ -7,3 +7,4 @@ Alpha for Q-Function: 400
 Gamma for Q-Function: 0.2
 Gassian Sigma for first Iteration: 10
 Gassian Sigma for next Iterations: 2
+Grid step size: 0.005

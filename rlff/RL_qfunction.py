@@ -14,13 +14,6 @@ class Q_function:
         self.global_qvalues[self.current_location] = initial_qval
         self.grid_step = grid_step
 
-        self.weights_series = []
-        self.local_weights_series = []
-        self.info_series = []
-        self.q_values_series = []
-        self.locations_list = []
-        self.data_series = [[0] * 6 for _ in range(30)]
-
     def _nd_gaussian(self, sigma, radius, n, normalize):
         nd_gaussian = []
         window_size = radius * 2 + 1
@@ -152,16 +145,17 @@ class Q_function:
                                                                      self.current_location, 'sum')
 
         data = []
-        data.append(round(reward, 2))
-        data.append(round(current_qval, 2))
-        data.append(round(next_qval, 2))
-        data.append(round(diff, 2))
-        data.append(round(Delta, 2))
-        data.append(round(self._recursive_average(weights_update), 4))
-        data.append(round(self._recursive_average(weights_local), 4))
+        data.append(round(reward, 2))                                   #data[0] = reward
+        data.append(round(current_qval, 2))                             #data[1] = current q-value
+        data.append(round(next_qval, 2))                                #data[2] = next q-value
+        data.append(round(diff, 2))                                     #data[3] = diff
+        data.append(round(Delta, 2))                                    #data[4] = delta
+        data.append(round(self._recursive_average(weights_update), 4))  #data[5] = average of weights update value
+        data.append(round(self._recursive_average(weights_local), 4))   #data[6] = average of local weights
+        data.append(self.current_location)                              #data[7] = location
+        data.append(next_action)                                        #data[8] = suggested next action
 
-        self.locations_list.append(self.current_location)
-        return next_action, data, self.locations_list
+        return data
 
     def gradients2action_convertor(self, gradients):
         action = [int(x / self.grid_step) for x in gradients]
