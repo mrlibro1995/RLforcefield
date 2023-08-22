@@ -14,7 +14,7 @@ initial_qval = 2
 init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", id)
 qfunc = qf.Q_function(n_atoms, global_radius, local_radius, grid_step=grid_step, initial_qval=initial_qval)
 Alpha_gr = 0.03
-time_constant = 0.5  # nano-second
+time_constant = 0.05  # nano-second
 run_time = time_constant
 
 ### Q-function Initialization
