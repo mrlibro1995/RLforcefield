@@ -222,7 +222,7 @@ class SystemObj:
 
         return atoms, changes
 
-    def adjust_tuple_to_avoid_negatives(self, next_action, location):
+    def adjust_tuple_to_avoid_negatives(self, next_action, location, global_radius):
         # Check if both tuples have the same number of elements
         if len(next_action) != len(location):
             raise ValueError("Tuples must have the same number of elements")
@@ -235,5 +235,8 @@ class SystemObj:
                 temp_list = list(next_action)
                 temp_list[indx] = abs(element) + temp_list[indx]
                 next_action = tuple(temp_list)
-
+            elif element > global_radius * 2:
+                temp_list = list(next_action)
+                temp_list[indx] = 0
+                next_action = tuple(temp_list)
         return next_action

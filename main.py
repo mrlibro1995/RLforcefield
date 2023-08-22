@@ -14,8 +14,8 @@ initial_qval = 2
 init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", id)
 qfunc = qf.Q_function(n_atoms, global_radius, local_radius, grid_step=grid_step, initial_qval=initial_qval)
 Alpha_gr = 0.03
-time_constant = 4.0  # nano-second
-run_time = time_constant + 0.5
+time_constant = 0.5  # nano-second
+run_time = time_constant
 
 ### Q-function Initialization
 Alpha_qf = 400
@@ -24,6 +24,7 @@ GaussianSigma_first = 10
 GaussianSigma = 2
 locations_list = []
 action_list = []
+actionvalues_list = []
 reward_list = []
 delta_list = []
 nextQvalue_list = []
@@ -86,7 +87,8 @@ sys = init_sys.systemmodifier(id, atoms=top_sensitive_atoms, parameters="sigma",
 reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time)
 next_action, data, locations_list = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward,
                                                          normalize=True)
-action_list.append("QF")
+action_list.append("Grad")
+actionvalues_list.append(actions)
 l_weight_list.append(data[6])
 u_weight_list.append(data[5])
 delta_list.append(data[4])
@@ -100,19 +102,18 @@ print("                                        ")
 infolist.append(f"Next action suggested by QF: {next_action}")
 for idx, loc in enumerate(locations_list):
     infolist.append(
-        f"loc: {str(loc)} - rew: {round(reward_list[idx], 2)} - Delta: {delta_list[idx]} - Diff: {diff_list[idx]} - n-qval: {nextQvalue_list[idx]} - o-qval: {cur_qval_list[idx]} - uW: {u_weight_list[idx]} - lW: {l_weight_list[idx]} - Act: {action_list[idx]}")
+        f"loc: {str(loc)} - act: {actionvalues_list[idx]} - rew: {round(reward_list[idx], 2)} - Delta: {delta_list[idx]} - Diff: {diff_list[idx]} - n-qval: {nextQvalue_list[idx]} - o-qval: {cur_qval_list[idx]} - uW: {u_weight_list[idx]} - lW: {l_weight_list[idx]} - Act: {action_list[idx]}")
 
 for i in infolist:
     print(i)
 print("                                        ")
 print("#############################################")
-print("First movement Completed !!!!!")
-
-
 file_name = it_path + "/info.txt"
 with open(file_name, "w") as file:
     for string in infolist:
         file.write(string + "\n")
+print("First movement Completed !!!!!")
+
 
 id = 3
 
@@ -125,27 +126,30 @@ while id < 200:
     random_number = 0.2 #random.random()
     print(f"Epsilon Random Number: {random_number}")
     if random_number > 0.3:  ### Walk based on RL decision
-        next_action = sys.adjust_tuple_to_avoid_negatives(next_action, qfunc.current_location)
+        next_action = sys.adjust_tuple_to_avoid_negatives(next_action, qfunc.current_location,global_radius)
         changes = qfunc.action2changes_convertor(next_action)
         action_list.append("QF")
         print(f"QF Based Walk with: {changes}")
 
     elif random_number > 0.1 and random_number <= 0.3:  ### Walk based on Gradient Discent
         next_action = qfunc.gradients2action_convertor(gradients)
-        next_action = sys.adjust_tuple_to_avoid_negatives(next_action, qfunc.current_location)
+        print(f"#### {next_action}")
+        next_action = sys.adjust_tuple_to_avoid_negatives(next_action, qfunc.current_location,global_radius)
+        print(f"#### {next_action}")
         changes = qfunc.action2changes_convertor(next_action)
         action_list.append("Grad")
         print(f"Gradients Based Walk with: {changes}")
 
     else:  ### Walk based on Randomness
         next_action = tuple(random.randint(-local_radius, local_radius) for _ in range(n_atoms))
-        next_action = sys.adjust_tuple_to_avoid_negatives(next_action, qfunc.current_location)
+        next_action = sys.adjust_tuple_to_avoid_negatives(next_action, qfunc.current_location,global_radius)
         changes = qfunc.action2changes_convertor(next_action)
         action_list.append("Rand")
         print(f"Random Based Walk with: {changes}")
     print(f"Chosen Action: {next_action}")
     print("")
 
+    actionvalues_list.append(next_action)
     sys = sys.systemmodifier(id=id, atoms=top_sensitive_atoms, parameters="sigma",
                              change=changes, duration_ns=run_time, path=it_path)
     reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time)
@@ -167,7 +171,7 @@ while id < 200:
 
     for idx, loc in enumerate(locations_list):
         infolist.append(
-             f"loc: {str(loc)} - rew: {round(reward_list[idx], 2)} - Delta: {delta_list[idx]} - Diff: {diff_list[idx]} - n-qval: {nextQvalue_list[idx]} - o-qval: {cur_qval_list[idx]} - uW: {u_weight_list[idx]} - lW: {l_weight_list[idx]} - Act:{action_list[idx]}")
+             f"loc: {str(loc)} - act: {actionvalues_list[idx]} - rew: {round(reward_list[idx], 2)} - Delta: {delta_list[idx]} - Diff: {diff_list[idx]} - n-qval: {nextQvalue_list[idx]} - o-qval: {cur_qval_list[idx]} - uW: {u_weight_list[idx]} - lW: {l_weight_list[idx]} - Act:{action_list[idx]}")
 
     for i in infolist:
         print(i)
