@@ -40,7 +40,7 @@ class SystemObj:
         sys.addForce(barostat)
         simulation = Simulation(modeller.topology, sys, integrator)
 
-        if id == 0:  # sensitivity calculation
+        if id == 0:  ## sensitivity calculation
             print("")
             print("Trajectory for Sensitivity Calculation Process !!!!")
             sys.addForce(PlumedForce(open(plumed_file).read()))
