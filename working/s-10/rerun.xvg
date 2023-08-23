@@ -1,4 +1,4 @@
-# This file was created Tue Mar 28 19:55:55 2023
+# This file was created Wed Aug 23 00:06:41 2023
 # Created by:
 #              :-) GROMACS - gmx mdrun, 2021.4-Ubuntu-2021.4-2 (-:
 # 
@@ -9,7 +9,7 @@
 #   gmx mdrun -deffnm rerun -rerun ../../v2_traj.xtc -ntomp 1 -ntmpi 1 -nb cpu -pme cpu
 # gmx mdrun is part of G R O M A C S:
 #
-# Gyas ROwers Mature At Cryogenic Speed
+# Georgetown Riga Oslo Madrid Amsterdam Chisinau Stockholm
 #
 @    title "dH/d\xl\f{} and \xD\f{}H"
 @    xaxis  label "Time (ps)"
