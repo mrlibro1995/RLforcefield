@@ -16,7 +16,7 @@ class SystemObj:
         self.pdb = pdb
         self.id = id_sample
 
-    def     trajectory_producer(self, plumed_file='plumed_sens.dat', id=0, duration_ns: float = 1.0, path: str = "/"):
+    def trajectory_producer(self, plumed_file='plumed_sens.dat', id=0, duration_ns: float = 1.0, path: str = "/"):
         # If the trajectory exists already then remove it
         trajectory_filename = path + "/" + f'output_traj{id}.xtc'
         chk_filename = path + "/" + f'state_{id}.chk'
@@ -97,18 +97,18 @@ class SystemObj:
         except:
             simulation.loadCheckpoint(chk_filename)
 
-    def helix_reward_calc(self, xtc, dir, time_constant, run_time,sensitivity):
+    def helix_reward_calc(self, xtc, dir, time_constant, run_time, sensitivity):
         ### first part: calculation of helicity and save the helix file
         command = "cp plumed_sens.dat plumed.dat protein.pdb " + dir + "/"
         os.system(command)
         os.chdir(dir)
-        if sensitivity ==1:
+        if sensitivity == 1:
             command = "plumed driver --mf_xtc " + xtc + " --plumed plumed_sens.dat --pdb " + self.pdb
         else:
             command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + self.pdb
         os.system(command)
         os.chdir('..')
-        self.helicity = self.reward_calculation(dir, time_constant, run_time)
+        self.helicity = self.reward_calculation(dir, time_constant, run_time, sensitivity)
         return self.helicity
 
     def time_constant_cal(self):
@@ -153,11 +153,14 @@ class SystemObj:
         print(f"average of helicities: {average_list}")
         return None
 
-    def reward_calculation(self, dir, time_constant, run_time):
+    def reward_calculation(self, dir, time_constant, run_time, sensitivity):
         time_constant *= 100
         run_time *= 100
         # Get thhe list of files in the directory
-        file_names = [file for file in os.listdir(dir) if file == "helix.dat"]
+        if sensitivity == 1:
+            file_names = [file for file in os.listdir(dir) if file == "helix_sens.dat"]
+        else:
+            file_names = [file for file in os.listdir(dir) if file == "helix.dat"]
         data_lists = []  # List to store the extracted data
         for file_path in file_names:
             file_path = os.path.join(dir, file_path)
@@ -271,7 +274,8 @@ class SystemObj:
             return False, distances_gradients[0][1]
 
         # If the current location is between the two closest locations, interpolate their gradients
-        elif len(distances_gradients) > 1 and distances_gradients[1][0] < threshold * 1.5:  # 1.5 is an arbitrary factor, adjust as needed
+        elif len(distances_gradients) > 1 and distances_gradients[1][
+            0] < threshold * 1.5:  # 1.5 is an arbitrary factor, adjust as needed
             print("**********  current location is between the two closest locations  ************")
             weight1 = 1 - distances_gradients[0][0] / (distances_gradients[0][0] + distances_gradients[1][0])
             weight2 = 1 - weight1
