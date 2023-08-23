@@ -16,7 +16,7 @@ class SystemObj:
         self.pdb = pdb
         self.id = id_sample
 
-    def trajectory_producer(self, plumed_file='plumed_sens.dat', id=0, duration_ns: float = 1.0, path: str = "/"):
+    def     trajectory_producer(self, plumed_file='plumed_sens.dat', id=0, duration_ns: float = 1.0, path: str = "/"):
         # If the trajectory exists already then remove it
         trajectory_filename = path + "/" + f'output_traj{id}.xtc'
         chk_filename = path + "/" + f'state_{id}.chk'
@@ -46,6 +46,8 @@ class SystemObj:
             sys.addForce(PlumedForce(open(plumed_file).read()))
             simulation.context.setPositions(modeller.positions)
             print(f"minimizing in {id}")
+            simulation.minimizeEnergy(maxIterations=400)
+            print(f"minimized in {id}")
             topo = gml.Top(self.topo, pdb=self.pdb)
             topo.check_pdb()
             topo.save_top(path + "/" + str(id) + ".top")
