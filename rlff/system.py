@@ -46,6 +46,8 @@ class SystemObj:
             sys.addForce(PlumedForce(open(plumed_file).read()))
             simulation.context.setPositions(modeller.positions)
             print(f"minimizing in {id}")
+            topo = gml.Top(self.topo, pdb=self.pdb)
+            topo.check_pdb()
             top.save_top(path + "/" + str(id) + ".top")
             top.pdb.save_pdb(path + "/" + str(id) + ".pdb")
             with open(plumed_file, 'r') as file:
