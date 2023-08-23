@@ -44,9 +44,13 @@ class SystemObj:
             print("")
             print("Trajectory for Sensitivity Calculation Process !!!!")
             sys.addForce(PlumedForce(open(plumed_file).read()))
-            with open(plumed_file, 'r') as file:
-                content = file.read()
-                print(content)
+            simulation.context.setPositions(modeller.positions)
+            print(f"minimizing in {id}")
+            simulation.minimizeEnergy(maxIterations=400)
+            print(f"minimized in {id}")
+            # with open(plumed_file, 'r') as file:
+            #     content = file.read()
+            #     print(content)
         elif id == 1:  # time constant calculation
             print("")
             print("Trajectory for Time Constant Process !!!!")
