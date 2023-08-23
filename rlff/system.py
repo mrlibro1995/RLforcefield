@@ -169,11 +169,6 @@ class SystemObj:
         return reward
 
     def sensitivity_calc(self, xtc, helicity, exclude):
-
-        """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-            calculation of sensitivity of each atom **
-        """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
         td = gml.ThermoDiff()
         # this adds all possible NBFIXes to the list of calculated sensitivities:
         td.add_all_sigma_mods(top=self.topo,
@@ -240,3 +235,31 @@ class SystemObj:
                 temp_list[indx] = 0
                 next_action = tuple(temp_list)
         return next_action
+
+    def _euclidean_distance(self, a, b):
+        return np.linalg.norm(a - b)
+
+    def should_calculate_sensitivity(self, current_location, info_dic, threshold=10):
+        distances_gradients = [(self._euclidean_distance(current_location, location), gradient)
+                               for location, gradient in info_dic['sensitivity_list']]
+
+        # Sort by distance
+        distances_gradients.sort(key=lambda x: x[0])
+
+        # If the closest location is within the threshold, use its gradient
+        if distances_gradients[0][0] < threshold:
+            print("**********  If the closest location is within the threshold  ************")
+            return False, distances_gradients[0][1]
+
+        # If the current location is between the two closest locations, interpolate their gradients
+        elif distances_gradients[1][0] < threshold * 1.5:  # 1.5 is an arbitrary factor, adjust as needed
+            print("**********  If the current location is between the two closest locations  ************")
+            weight1 = 1 - distances_gradients[0][0] / (distances_gradients[0][0] + distances_gradients[1][0])
+            weight2 = 1 - weight1
+            estimated_gradient = weight1 * distances_gradients[0][1] + weight2 * distances_gradients[1][1]
+            return False, estimated_gradient
+
+        # Otherwise, run sensitivity_calculation
+        else:
+            print("**********  ELLLLSSSSEEEE  ************")
+            return True, None
