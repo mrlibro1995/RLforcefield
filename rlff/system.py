@@ -237,7 +237,9 @@ class SystemObj:
         return next_action
 
     def _euclidean_distance(self, a, b):
-        return np.linalg.norm(a - b)
+        a_array = np.array(a)
+        b_array = np.array(b)
+        return np.linalg.norm(a_array - b_array)
 
     def should_calculate_sensitivity(self, current_location, info_dic, threshold=10):
         distances_gradients = [(self._euclidean_distance(current_location, location), gradient)
