@@ -48,8 +48,8 @@ class SystemObj:
             print(f"minimizing in {id}")
             topo = gml.Top(self.topo, pdb=self.pdb)
             topo.check_pdb()
-            top.save_top(path + "/" + str(id) + ".top")
-            top.pdb.save_pdb(path + "/" + str(id) + ".pdb")
+            topo.save_top(path + "/" + str(id) + ".top")
+            topo.pdb.save_pdb(path + "/" + str(id) + ".pdb")
             with open(plumed_file, 'r') as file:
                 content = file.read()
                 print(content)
