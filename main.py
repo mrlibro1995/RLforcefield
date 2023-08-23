@@ -98,6 +98,7 @@ while id < 200:
     elif random_number > 0.1 and random_number <= 0.3:  ### Walk based on Gradient Discent
         do_senstitivity, gradients = sys.should_calculate_sensitivity(current_location=qfunc.current_location,
                                                                       info_dic=info_dic, threshold=8)
+        do_senstitivity = True
         if do_senstitivity:
             sensitivity_counter += 1
             print("previous sensitivity calculations")
@@ -108,6 +109,7 @@ while id < 200:
             directory = f'sensitivity{sensitivity_counter}_xtc'
             it_path = os.path.join(parent_dir, directory)
             os.mkdir(it_path)
+
             sys.trajectory_producer(id=0, duration_ns=10.0, path=it_path)
             sys.helix_reward_calc(it_path + "/" + f'output_traj0.xtc', it_path, time_constant, run_time)
             helix_atoms = sys.sensitivity_calc(xtc=it_path + "/" + 'output_traj0.xtc',
