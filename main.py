@@ -130,7 +130,7 @@ while id < 200:
             action_type = "Grad"
             print(f"Gradients Based Walk with: {changes}")
 
-    else:  ### Walk based on Randomness
+    else:  #### Walk based on Randomness
         next_action = tuple(random.randint(-local_radius, local_radius) for _ in range(n_atoms))
         next_action = sys.adjust_tuple_to_avoid_negatives(next_action, qfunc.current_location, global_radius)
         changes = qfunc.action2changes_convertor(next_action)
