@@ -73,7 +73,7 @@ os.mkdir(it_path)
 sys = init_sys.systemmodifier(id, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
                               duration_ns=run_time, path=it_path)
 
-reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time)
+reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time, sensitivity=0)
 data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward,
                             normalize=True)
 
@@ -110,8 +110,8 @@ while id < 200:
             it_path = os.path.join(parent_dir, directory)
             os.mkdir(it_path)
 
-            sys.trajectory_producer(id=0, duration_ns=10.0, path=it_path)
-            sys.helix_reward_calc(it_path + "/" + f'output_traj0.xtc', it_path, time_constant, run_time)
+            sys.trajectory_producer(id=0, duration_ns=1.0, path=it_path)
+            sys.helix_reward_calc(it_path + "/" + f'output_traj0.xtc', it_path, time_constant, run_time,sensitivity=1)
             helix_atoms = sys.sensitivity_calc(xtc=it_path + "/" + 'output_traj0.xtc',
                                                helicity=it_path + "/" + 'helix0.dat',
                                                exclude=['OW', 'HW', 'Cl', 'K'])
@@ -144,7 +144,7 @@ while id < 200:
     info_dic['actionvalues'].append(next_action)
     sys = sys.systemmodifier(id=id, atoms=top_sensitive_atoms, parameters="sigma",
                              change=changes, duration_ns=run_time, path=it_path)
-    reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time)
+    reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time,sensitivity=0)
     qfunc.current_location = tuple(x + y for x, y in zip(qfunc.current_location, next_action))
     data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward,
                                 normalize=True)

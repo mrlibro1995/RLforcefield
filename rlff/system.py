@@ -46,11 +46,11 @@ class SystemObj:
             sys.addForce(PlumedForce(open(plumed_file).read()))
             simulation.context.setPositions(modeller.positions)
             print(f"minimizing in {id}")
-            simulation.minimizeEnergy(maxIterations=400)
-            print(f"minimized in {id}")
-            # with open(plumed_file, 'r') as file:
-            #     content = file.read()
-            #     print(content)
+            top.save_top(path + "/" + str(id) + ".top")
+            top.pdb.save_pdb(path + "/" + str(id) + ".pdb")
+            with open(plumed_file, 'r') as file:
+                content = file.read()
+                print(content)
         elif id == 1:  # time constant calculation
             print("")
             print("Trajectory for Time Constant Process !!!!")
@@ -93,12 +93,15 @@ class SystemObj:
         except:
             simulation.loadCheckpoint(chk_filename)
 
-    def helix_reward_calc(self, xtc, dir, time_constant, run_time):
+    def helix_reward_calc(self, xtc, dir, time_constant, run_time,sensitivity):
         ### first part: calculation of helicity and save the helix file
-        command = "cp plumed.dat protein.pdb " + dir + "/"
+        command = "cp plumed_sens.dat plumed.dat protein.pdb " + dir + "/"
         os.system(command)
         os.chdir(dir)
-        command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + self.pdb
+        if sensitivity ==1:
+            command = "plumed driver --mf_xtc " + xtc + " --plumed plumed_sens.dat --pdb " + self.pdb
+        else:
+            command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + self.pdb
         os.system(command)
         os.chdir('..')
         self.helicity = self.reward_calculation(dir, time_constant, run_time)
