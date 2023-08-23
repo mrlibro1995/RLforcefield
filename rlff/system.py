@@ -247,15 +247,18 @@ class SystemObj:
 
         # Sort by distance
         distances_gradients.sort(key=lambda x: x[0])
+        print("******** distances and old gradients regard to current location")
+        for item in distances_gradients:
+            print(f"distance: {item[0]} -- gradients: {item[1]}")
 
         # If the closest location is within the threshold, use its gradient
         if distances_gradients[0][0] < threshold:
-            print("**********  If the closest location is within the threshold  ************")
+            print("**********  closest location is within the threshold  ************")
             return False, distances_gradients[0][1]
 
         # If the current location is between the two closest locations, interpolate their gradients
-        elif distances_gradients[1][0] < threshold * 1.5:  # 1.5 is an arbitrary factor, adjust as needed
-            print("**********  If the current location is between the two closest locations  ************")
+        elif len(distances_gradients) > 1 and distances_gradients[1][0] < threshold * 1.5:  # 1.5 is an arbitrary factor, adjust as needed
+            print("**********  current location is between the two closest locations  ************")
             weight1 = 1 - distances_gradients[0][0] / (distances_gradients[0][0] + distances_gradients[1][0])
             weight2 = 1 - weight1
             estimated_gradient = weight1 * distances_gradients[0][1] + weight2 * distances_gradients[1][1]
@@ -263,5 +266,5 @@ class SystemObj:
 
         # Otherwise, run sensitivity_calculation
         else:
-            print("**********  ELLLLSSSSEEEE  ************")
+            print("**********  Calculation of Gradients is stated  ************")
             return True, None

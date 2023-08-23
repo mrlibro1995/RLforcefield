@@ -100,10 +100,10 @@ while id < 200:
                                                                       info_dic=info_dic, threshold=8)
         if do_senstitivity:
             sensitivity_counter += 1
-            print("********  do sensitivity  ********")
             print("previous sensitivity calculations")
             for sublist in info_dic['sensitivity_list']:
                 print(f"location: {sublist[0]} -- values: {sublist[1]}")
+            print("********  do sensitivity  ********")
 
             directory = f'sensitivity{sensitivity_counter}_xtc'
             it_path = os.path.join(parent_dir, directory)
