@@ -113,9 +113,11 @@ while id < 200:
             sys.trajectory_producer(id=0, duration_ns=6.0, path=it_path, plumed_file="plumed_sens.dat")
             sys.helix_reward_calc(xtc=it_path + "/" + f'output_traj0.xtc', dir=it_path, time_constant=time_constant,
                                   run_time=run_time, sensitivity=1)
+            os.chdir(it_path)
             helix_atoms = sys.sensitivity_calc(xtc=it_path + "/" + 'output_traj0.xtc',
                                                helicity=it_path + "/" + 'helix_sens.dat',
                                                exclude=['OW', 'HW', 'Cl', 'K'])
+            os.chdir('..')
             top_sensitive_atoms, gradients = init_sys.sensitive_atoms(helix_atoms, n_atoms)
             gradients = [x * -Alpha_gr for x in gradients]
             print(f"new gradients: {gradients}")
