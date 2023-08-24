@@ -110,11 +110,11 @@ while id < 200:
             it_path = os.path.join(parent_dir, directory)
             os.mkdir(it_path)
 
-            sys.trajectory_producer(id=0, duration_ns=10.0, path=it_path, plumed_file="plumed_sens.dat")
+            sys.trajectory_producer(id=0, duration_ns=6.0, path=it_path, plumed_file="plumed_sens.dat")
             sys.helix_reward_calc(xtc=it_path + "/" + f'output_traj0.xtc', dir=it_path, time_constant=time_constant,
                                   run_time=run_time, sensitivity=1)
             helix_atoms = sys.sensitivity_calc(xtc=it_path + "/" + 'output_traj0.xtc',
-                                               helicity=it_path + "/" + 'helix0.dat',
+                                               helicity=it_path + "/" + 'helix_sens.dat',
                                                exclude=['OW', 'HW', 'Cl', 'K'])
             top_sensitive_atoms, gradients = init_sys.sensitive_atoms(helix_atoms, n_atoms)
             gradients = [x * -Alpha_gr for x in gradients]
