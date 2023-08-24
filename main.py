@@ -11,11 +11,11 @@ global_radius = 5
 local_radius = 2
 id = 2
 grid_step = 0.005
-initial_qval = 2
+initial_qval = 12
 init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", id)
 qfunc = qf.Q_function(n_atoms, global_radius, local_radius, grid_step=grid_step, initial_qval=initial_qval)
 Alpha_gr = 0.03
-time_constant = 0.05  # nano-second
+time_constant = 1.0  # nano-second
 run_time = time_constant
 sensitivity_counter = 1
 access_flag = 0  # 0 = full access login,  1 = low access login
@@ -110,8 +110,9 @@ while id < 200:
             it_path = os.path.join(parent_dir, directory)
             os.mkdir(it_path)
 
-            sys.trajectory_producer(id=0, duration_ns=1.0, path=it_path)
-            sys.helix_reward_calc(it_path + "/" + f'output_traj0.xtc', it_path, time_constant, run_time,sensitivity=1)
+            sys.trajectory_producer(id=0, duration_ns=10.0, path=it_path, plumed_file="plumed_sens.dat")
+            sys.helix_reward_calc(xtc=it_path + "/" + f'output_traj0.xtc', dir=it_path, time_constant=time_constant,
+                                  run_time=run_time, sensitivity=1)
             helix_atoms = sys.sensitivity_calc(xtc=it_path + "/" + 'output_traj0.xtc',
                                                helicity=it_path + "/" + 'helix0.dat',
                                                exclude=['OW', 'HW', 'Cl', 'K'])
@@ -144,7 +145,8 @@ while id < 200:
     info_dic['actionvalues'].append(next_action)
     sys = sys.systemmodifier(id=id, atoms=top_sensitive_atoms, parameters="sigma",
                              change=changes, duration_ns=run_time, path=it_path)
-    reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time,sensitivity=0)
+    reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time,
+                                   sensitivity=0)
     qfunc.current_location = tuple(x + y for x, y in zip(qfunc.current_location, next_action))
     data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma, reward,
                                 normalize=True)

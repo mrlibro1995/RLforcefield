@@ -16,7 +16,7 @@ class SystemObj:
         self.pdb = pdb
         self.id = id_sample
 
-    def trajectory_producer(self, plumed_file='plumed_sens.dat', id=0, duration_ns: float = 1.0, path: str = "/"):
+    def trajectory_producer(self, plumed_file, id=0, duration_ns: float = 1.0, path: str = "/"):
         # If the trajectory exists already then remove it
         trajectory_filename = path + "/" + f'output_traj{id}.xtc'
         chk_filename = path + "/" + f'state_{id}.chk'
