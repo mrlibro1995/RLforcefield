@@ -53,9 +53,39 @@ class SystemObj:
             print("")
             print("Trajectory for Sensitivity Calculation Process !!!!")
             sys.addForce(PlumedForce(open(plumed_file).read()))
+
+            #########  show forces
+            print("###### Show forces")
+            print("")
+            forces = {sys.getForce(index): sys.getForce(index) for index in range(sys.getNumForces())}
+            print(forces)
+            print("")
+            print("#################")
+            ##########################
+
             simulation.context.setPositions(modeller.positions)
+
+            #########  show forces
+            print("###### Show forces")
+            print("")
+            forces = {sys.getForce(index): sys.getForce(index) for index in range(sys.getNumForces())}
+            print(forces)
+            print("")
+            print("#################")
+            ##########################
+
             print(f"minimizing in {id}")
             simulation.minimizeEnergy(maxIterations=400)
+
+            #########  show forces
+            print("###### Show forces")
+            print("")
+            forces = {sys.getForce(index): sys.getForce(index) for index in range(sys.getNumForces())}
+            print(forces)
+            print("")
+            print("#################")
+            ##########################
+
             print(f"minimized in {id}")
             topo = gml.Top(self.topo, pdb=self.pdb)
             topo.check_pdb()
