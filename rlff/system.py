@@ -43,7 +43,7 @@ class SystemObj:
         #########  show forces
         print("###### Show forces")
         print("")
-        forces = sys.getForce(0).class.name
+        forces = {sys.getForce(index): sys.getForce(index) for index in range(sys.getNumForces())}
         print(forces)
         print("")
         print("#################")
