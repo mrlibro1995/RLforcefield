@@ -40,6 +40,15 @@ class SystemObj:
         sys.addForce(barostat)
         simulation = Simulation(modeller.topology, sys, integrator)
 
+        #########  show forces
+        print("###### Show forces")
+        print("")
+        forces = sys.getForce(0)
+        print(forces)
+        print("")
+        print("#################")
+        ##########################
+
         if id == 0:  ## sensitivity calculation
             print("")
             print("Trajectory for Sensitivity Calculation Process !!!!")
