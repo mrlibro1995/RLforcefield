@@ -57,6 +57,8 @@ info_dic = {
 helix_atoms = init_sys.sensitivity_calc("v2_traj.xtc", "v2_helix.dat",
                                         ['OW', 'HW', 'Cl', 'K'])
 top_sensitive_atoms, gradients = init_sys.sensitive_atoms(helix_atoms, n_atoms)
+print(top_sensitive_atoms)
+print(gradients)
 gradients = [x * -Alpha_gr for x in gradients]
 action = qfunc.gradients2action_convertor(gradients)
 info_dic['sensitivity_list'].append([qfunc.current_location, gradients])

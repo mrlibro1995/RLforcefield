@@ -261,7 +261,7 @@ class SystemObj:
 
     def sensitive_atoms(self, hel_atoms, n_top):
         '''''''''''''''''''''''''''''''''''''''''''''''
-        returns back the nsss_top sensitive values which 
+        returns back the n_top sensitive values which 
         are calculated in sensitivity_calc function.1
         according to absolute value of the list.
         '''''''''''''''''''''''''''''''''''''''''''''''
