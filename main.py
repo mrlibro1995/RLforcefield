@@ -172,7 +172,7 @@ while id < 500:
                                 gaussian_sigma=GaussianSigma, reward=reward,
                                 normalize=True)
     next_location = tuple(x + y for x, y in zip(current_location, next_action))
-    vs.runtime_visualizarion(id, info_dic=info_dic, act_type="Grad", next_location=next_location, actions=action,
+    vs.runtime_visualizarion(id, info_dic=info_dic, act_type=action_type, next_location=next_location, actions=action,
                              data=data, reward=reward, it_path=it_path)
 
     current_location = next_location

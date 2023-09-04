@@ -42,10 +42,11 @@ def runtime_visualizarion(id, info_dic, act_type, next_location, actions, data, 
     infolist.append(f"Next action suggested by QF: {data[8]}")  # data[8] = next_action
     for idx, loc in enumerate(info_dic["locations"]):
         infolist.append(
-            f"loc: {str(loc)} - nxt-loc: {info_dic['next_locations'][idx]} - act: {info_dic['actionvalues'][idx]} - rew: {round(info_dic['rewards'][idx], 2)} - Delta: {info_dic['deltas'][idx]} - Diff: {info_dic['diffs'][idx]} - n-qval: {info_dic['nextQvalues'][idx]} - o-qval: {info_dic['cur_qvals'][idx]} - uW: {info_dic['u_weights'][idx]} - lW: {info_dic['l_weights'][idx]} - Act: {info_dic['actiontype'][idx]}")
+            f"loc: {str(loc)} - act: {info_dic['actionvalues'][idx]} - nxt-loc: {info_dic['next_locations'][idx]} - rew: {round(info_dic['rewards'][idx], 2)} - Delta: {info_dic['deltas'][idx]} - Diff: {info_dic['diffs'][idx]} - n-qval: {info_dic['nextQvalues'][idx]} - o-qval: {info_dic['cur_qvals'][idx]} - uW: {info_dic['u_weights'][idx]} - lW: {info_dic['l_weights'][idx]} - Act: {info_dic['actiontype'][idx]}")
 
     for i in infolist:
         print(i)
+        print(" ")
     print("                                        ")
     print("#############################################")
     file_name = it_path + "/info.txt"
