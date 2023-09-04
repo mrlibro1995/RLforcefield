@@ -135,18 +135,9 @@ while id < 500:
             gradients = [x * -Alpha_gr for x in gradients]
             print(f"new gradients: {gradients}")
             info_dic['sensitivity_list'].append([current_location, gradients])
-            next_action = qfunc.gradients2action_convertor(gradients)
-            next_action = sys.adjust_tuple_to_avoid_negatives(next_action,current_location, global_radius)
-            changes = qfunc.action2changes_convertor(next_action)
-            action_type = "Grad"
             print("********  Finished sensitivity  ********")
         else:
             print("******** NOT  do sensitivity  ********")
-            next_action = qfunc.gradients2action_convertor(gradients)
-            next_action = sys.adjust_tuple_to_avoid_negatives(next_action, current_location, global_radius)
-            changes = qfunc.action2changes_convertor(next_action)
-            action_type = "Grad"
-            print(f"Gradients Based Walk with: {changes}")
         next_action = qfunc.gradients2action_convertor(gradients)
         next_action = sys.adjust_tuple_to_avoid_negatives(next_action, current_location, global_radius)
         changes = qfunc.action2changes_convertor(next_action)
@@ -172,7 +163,7 @@ while id < 500:
                                 gaussian_sigma=GaussianSigma, reward=reward,
                                 normalize=True)
     next_location = tuple(x + y for x, y in zip(current_location, next_action))
-    vs.runtime_visualizarion(id, info_dic=info_dic, act_type=action_type, next_location=next_location, actions=action,
+    vs.runtime_visualizarion(id, info_dic=info_dic, act_type=action_type, next_location=next_location, actions=next_action,
                              data=data, reward=reward, it_path=it_path)
 
     current_location = next_location
