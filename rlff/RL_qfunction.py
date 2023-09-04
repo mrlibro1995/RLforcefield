@@ -151,7 +151,7 @@ class Q_function:
         data.append(round(Delta, 2))                                    #data[4] = delta
         data.append(round(self._recursive_average(weights_update), 4))  #data[5] = average of weights update value
         data.append(round(self._recursive_average(weights_local), 4))   #data[6] = average of local weights
-        data.append(current_location)                              #data[7] = location
+        data.append(current_location)                                   #data[7] = location
         data.append(next_action)                                        #data[8] = suggested next action
 
         return data
