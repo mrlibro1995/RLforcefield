@@ -4,14 +4,13 @@ import itertools
 
 
 class Q_function:
-    def __init__(self, global_dimensions, global_radius, local_radius, grid_step, initial_qval):
+    def __init__(self, global_dimensions, global_radius, local_radius, grid_step, initial_qval, initial_location):
         self.global_dimensions = global_dimensions
         self.global_radius = global_radius
         self.local_radius = local_radius
-        self.current_location = (self.global_radius,) * self.global_dimensions
         self.global_weights = self._nd_gaussian(10, global_radius, global_dimensions, False)
         self.global_qvalues = np.zeros(shape=(global_radius * 2 + 1,) * global_dimensions)
-        self.global_qvalues[self.current_location] = initial_qval
+        self.global_qvalues[initial_location] = initial_qval
         self.grid_step = grid_step
 
     def _nd_gaussian(self, sigma, radius, n, normalize):
@@ -103,18 +102,18 @@ class Q_function:
         qval = np.sum(gaus_weights)
         return qval
 
-    def update_weights(self, id, Alpha, Gamma, gaussian_sigma, reward, normalize):
+    def update_weights(self, id, Alpha, Gamma, gaussian_sigma, reward, normalize, current_location):
         global_qvalues_copy = np.copy(self.global_qvalues)
         Gaus = self._nd_gaussian(gaussian_sigma, self.local_radius, self.global_dimensions, normalize)
 
         if id == 2:
-            mins, maxs = self._check_borders(self.current_location)
-            denominator = self.q_value_calculation(self.current_location, normalize)
-            numerator = self.global_qvalues[self.current_location]
+            mins, maxs = self._check_borders(current_location)
+            denominator = self.q_value_calculation(current_location, normalize)
+            numerator = self.global_qvalues[current_location]
             factor =  numerator/ denominator
             self.global_weights = self.global_weights * factor
         else:
-            mins, maxs = self._check_borders(self.current_location)
+            mins, maxs = self._check_borders(current_location)
 
         ranges = [(x, y + 1) for x, y in zip(mins, maxs)]
         combinations = list(itertools.product(*[range(r[0], r[1]) for r in ranges]))
@@ -133,16 +132,16 @@ class Q_function:
         qvalues_local_copy[loc_tuple] = 0.0
         maxQ_index = np.unravel_index(np.argmax(qvalues_local_copy), qvalues_local_copy.shape)
         gamma_maxQ = Gamma * qvalues_local_copy[maxQ_index]
-        diff = gamma_maxQ - self.global_qvalues[self.current_location]
+        diff = gamma_maxQ - self.global_qvalues[current_location]
         Delta = diff + reward
         weights_update = Alpha * Delta * Gaus
         next_action = tuple(x - y for x, y in zip(maxQ_index, loc_tuple))
-        current_qval = self.global_qvalues[self.current_location]
+        current_qval = self.global_qvalues[current_location]
         next_qval = qvalues_local_copy[maxQ_index]
 
         self.global_qvalues = global_qvalues_copy
         self.global_weights = self._operation_matrices_with_location(self.global_weights, weights_update,
-                                                                     self.current_location, 'sum')
+                                                                     current_location, 'sum')
 
         data = []
         data.append(round(reward, 2))                                   #data[0] = reward
@@ -152,7 +151,7 @@ class Q_function:
         data.append(round(Delta, 2))                                    #data[4] = delta
         data.append(round(self._recursive_average(weights_update), 4))  #data[5] = average of weights update value
         data.append(round(self._recursive_average(weights_local), 4))   #data[6] = average of local weights
-        data.append(self.current_location)                              #data[7] = location
+        data.append(current_location)                              #data[7] = location
         data.append(next_action)                                        #data[8] = suggested next action
 
         return data

@@ -12,11 +12,12 @@ local_radius = 2
 id = 2
 grid_step = 0.005
 initial_qval = 14
+current_location = (global_radius,) * n_atoms
 init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", id)
-qfunc = qf.Q_function(n_atoms, global_radius, local_radius, grid_step=grid_step, initial_qval=initial_qval)
+qfunc = qf.Q_function(n_atoms, global_radius, local_radius, grid_step=grid_step, initial_qval=initial_qval, initial_location=current_location)
 Alpha_gr = 0.03
-time_constant = 4.0  # nano-second
-run_time = time_constant + 0.5
+time_constant = 1.0  # nano-second
+run_time = time_constant
 sensitivity_counter = 1
 access_flag = 0  # 0 = full access login,  1 = low access login
 
@@ -61,7 +62,8 @@ print(top_sensitive_atoms)
 print(gradients)
 gradients = [x * -Alpha_gr for x in gradients]
 action = qfunc.gradients2action_convertor(gradients)
-info_dic['sensitivity_list'].append([qfunc.current_location, gradients])
+info_dic['sensitivity_list'].append([current_location, gradients])
+
 print(f"gradients: {gradients}")
 print(f"actions: {action}")
 
@@ -72,14 +74,19 @@ vs.init_system_visualization(n_atoms, global_radius, local_radius, gradients, Al
 directory = 'it_2'
 it_path = os.path.join(parent_dir, directory)
 os.mkdir(it_path)
+
 sys = init_sys.systemmodifier(id, atoms=top_sensitive_atoms, parameters="sigma", change=gradients,
                               duration_ns=run_time, path=it_path)
 
 reward = sys.helix_reward_calc(sys.trj, dir=directory, time_constant=time_constant, run_time=run_time, sensitivity=0)
 data = qfunc.update_weights(id, Alpha_qf, Gamma_qf, GaussianSigma_first, reward,
-                            normalize=True)
+                            normalize=True,current_location=current_location)
 
 vs.runtime_visualizarion(id, info_dic, "Grad", action, data, reward, it_path)
+print(f"$$$ TEST: current location: {current_location}")
+print(f"$$$ TEST: action: {action}")
+current_location = tuple(x + y for x, y in zip(current_location, action))
+print(f"$$$ TEST: current location: {current_location}")
 
 id = 3
 
