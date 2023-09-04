@@ -46,11 +46,8 @@ def runtime_visualizarion(id, info_dic, act_type, next_location, actions, data, 
         infolist.append(f"n-qval: {info_dic['nextQvalues'][idx]} - o-qval: {info_dic['cur_qvals'][idx]}")
         infolist.append(f"uW: {info_dic['u_weights'][idx]} - lW: {info_dic['l_weights'][idx]}")
         infolist.append("")
-    for i in infolist[::6]:
+    for i in infolist:
         print(i)
-        print(i+1)
-        print(i+2)
-        print(i+3)
     print("                                        ")
     print("#############################################")
     file_name = it_path + "/info.txt"
