@@ -40,10 +40,10 @@ def runtime_visualizarion(id, info_dic, act_type, next_location, actions, data, 
     print(f"######## {id} ITERATION RESULT ########")
     print("                                        ")
     for idx, loc in enumerate(info_dic["locations"]):
-        infolist.append(f"loc: {str(loc)} - act: {info_dic['actionvalues'][idx]} - nxt-loc: {info_dic['next_locations'][idx]} - Act: {info_dic['actiontype'][idx]}")
-        infolist.append(f"rewar: {round(info_dic['rewards'][idx], 2)} - Delta: {info_dic['deltas'][idx]} - Diff: {info_dic['diffs'][idx]}")
-        infolist.append(f"current-qval: {info_dic['cur_qvals'][idx]} - next-qval: {info_dic['nextQvalues'][idx]}")
-        infolist.append(f"local weights: {info_dic['l_weights'][idx]} - update weights: {info_dic['u_weights'][idx]}")
+        infolist.append(f"loc: {str(loc)}    act: {info_dic['actionvalues'][idx]}    nxt-loc: {info_dic['next_locations'][idx]}    Act: {info_dic['actiontype'][idx]}")
+        infolist.append(f"rewar: {round(info_dic['rewards'][idx], 2)}    Delta: {info_dic['deltas'][idx]} - Diff: {info_dic['diffs'][idx]}")
+        infolist.append(f"current-qval: {info_dic['cur_qvals'][idx]}    next-qval: {info_dic['nextQvalues'][idx]}")
+        infolist.append(f"local weights: {info_dic['l_weights'][idx]}    update weights: {info_dic['u_weights'][idx]}")
         infolist.append("")
     for i in infolist:
         print(i)

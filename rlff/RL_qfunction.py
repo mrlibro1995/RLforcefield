@@ -135,6 +135,7 @@ class Q_function:
         diff = gamma_maxQ - self.global_qvalues[current_location]
         Delta = diff + reward
         weights_update = Alpha * Delta * Gaus
+
         next_action = tuple(x - y for x, y in zip(maxQ_index, loc_tuple))
         current_qval = self.global_qvalues[current_location]
         next_qval = qvalues_local_copy[maxQ_index]
