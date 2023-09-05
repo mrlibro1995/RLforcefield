@@ -17,8 +17,8 @@ init_sys = s.SystemObj("v2_top.top", "v2_pdb.pdb", id)
 qfunc = qf.Q_function(n_atoms, global_radius, local_radius, grid_step=grid_step, initial_qval=initial_qval,
                       initial_location=current_location)
 Alpha_gr = 0.03
-time_constant = 1.0  # nano-second
-run_time = time_constant
+time_constant = 4.0  # nano-second
+run_time = time_constant + 0.5
 sensitivity_counter = 1
 access_flag = 0  # 0 = full access login,  1 = low access login
 

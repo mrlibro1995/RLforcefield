@@ -144,6 +144,8 @@ class Q_function:
         self.global_weights = self._operation_matrices_with_location(self.global_weights, weights_update,
                                                                      current_location, 'sum')
 
+
+
         data = []
         data.append(round(reward, 2))                                   #data[0] = reward
         data.append(round(current_qval, 2))                             #data[1] = current q-value
