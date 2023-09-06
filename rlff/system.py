@@ -133,7 +133,7 @@ class SystemObj:
         os.system(command)
         os.chdir(dir)
         if sensitivity == 1:
-            command = "plumed driver --mf_xtc " + xtc + " --plumed plumed_sens.dat --pdb " + self.pdb
+            command = "plumed driver --mf_xtc " + xtc + " --plumed plumed_sens.dat --pdb 0.pdb"
         else:
             command = "plumed driver --mf_xtc " + xtc + " --plumed plumed.dat --pdb " + self.pdb
         os.system(command)
